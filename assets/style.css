@@ -20,6 +20,8 @@ body::before{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 }
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+/* no image, anywhere, ever spills past its column or the screen */
+img{max-width:100%;height:auto}
 
 /* ---------- TOP BAR ---------- */
 .topbar{position:sticky;top:0;z-index:40;background:rgba(250,248,243,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
@@ -140,8 +142,8 @@ h1.display b{font-weight:700;font-style:normal;color:var(--clay)}
 .embed iframe{width:100%;aspect-ratio:16/9;border:1px solid var(--rule);border-radius:4px;display:block}
 .embed.pdf iframe{aspect-ratio:auto;height:560px}
 /* GIFs / screenshots inside .embed: responsive + centered, never wider than the column or the phone */
-.post-body .embed figure{margin:0}
-.post-body .embed img{width:auto;max-width:100%;height:auto;margin:0 auto}
+.embed figure{margin:0}
+.embed img{width:auto;max-width:100%;height:auto;margin:0 auto}
 .embed-cap{font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);margin-top:8px;text-align:center}
 .doc-card{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--rule);border-left:4px solid var(--clay);border-radius:3px;padding:16px 18px;margin:22px 0;text-decoration:none;color:inherit}
 .doc-card:hover{transform:translateX(3px)}
