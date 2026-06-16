@@ -1,6 +1,6 @@
 ---
 title: On building quietly
-date: 2026-06-02
+date: 2026-09-02
 lang: en
 type: note
 excerpt: Infrastructure as an act of care, with a photo, an embedded talk video, and a linked PDF.

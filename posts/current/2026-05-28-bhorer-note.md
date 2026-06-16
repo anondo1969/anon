@@ -1,5 +1,5 @@
 ---
-title: ভোরের নোট
+title: ভোরের নোট 2
 date: 2026-05-28
 lang: bn
 type: কবিতা
