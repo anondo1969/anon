@@ -3,7 +3,7 @@ title: আমি আছি
 date: 2026-04-03
 lang: bn
 type: আহসান হাবীব
-excerpt: Bengali poem "I Remain" by Ahsan Habib, set to AI-generated music.
+excerpt: Bengali poem "I Remain" by Ahsan Habib.
 ---
 
 # আমি আছি

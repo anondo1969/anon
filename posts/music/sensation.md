@@ -3,7 +3,7 @@ title: বোধ
 date: 2026-04-03
 lang: bn
 type: জীবনানন্দ দাশ
-excerpt: Bengali poem "Sensation" by Jibananda Das, set to AI-generated music.
+excerpt: Bengali poem "Sensation" by Jibananda Das.
 ---
 
 # বোধ
