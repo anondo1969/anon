@@ -1,5 +1,77 @@
 [
   {
+    "slug": "2024-03-28-about-me",
+    "title": "PhD-work - About Me",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "I completed my PhD at Stockholm University (2018-2024), where I focused on making AI in healthcare both practical and easy to understand. My work connects clinical data with medical imaging..."
+  },
+  {
+    "slug": "2024-03-28-awards",
+    "title": "PhD-work - Awards",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "Best Paper Award at the 13th International Conference on Health Informatics (HEALTHINF 2020) Best Student Paper Award at the IEEE 35th International Symposium on Computer Based Medical Systems (CBMS 2022)..."
+  },
+  {
+    "slug": "2024-03-28-contact",
+    "title": "PhD-work - Contact",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "If you're interested in collaboration, discussion, or providing guidance, I'm open to connecting. Please reach out on LinkedIn (https://www.linkedin.com/in/anondo) or drop me an email at mahbub.ul.alam.anondo@gmail.com. Together, we can harness..."
+  },
+  {
+    "slug": "2024-03-28-gratitude",
+    "title": "PhD-work - Gratitude",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": ""
+  },
+  {
+    "slug": "2024-03-28-news",
+    "title": "PhD-work - News",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "Bättre vårdbeslut när patienters egna data används (Better healthcare decisions when patients' own data is used) বিজ্ঞানীর সাক্ষাৎকার : স্মার্ট-স্বাস্থ্যসেবার বিজ্ঞানী মাহবুব উল আলম (Scientist's Interview: Smart Healthcare Scientist Mahbub..."
+  },
+  {
+    "slug": "2024-03-28-presentation-resources-slides-poster-video-and-demo",
+    "title": "PhD-work - Presentation Resources: Slides, Poster, Video & Demo",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "1. Presentation Video PhD Public Defence: Advancing Clinical Decision Support Using Machine Learning & the Internet of Medical Things: Enhancing COVID-19 & Early Sepsis Detection Presentation Video Download Link Slides..."
+  },
+  {
+    "slug": "2024-03-28-publications",
+    "title": "PhD-work - Publications",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "Selected peer‑reviewed work (2017–2024). Full list and artifacts below (PDFs, slides, code, videos). 12. M. U. Alam. Advancing Clinical Decision Support Using Machine Learning & the Internet of Medical Things..."
+  },
+  {
+    "slug": "2024-03-28-shamsul-demo-app",
+    "title": "PhD-work - SHAMSUL Demo App",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "SHAMSUL Demo App: https://shamsul.serve.scilifelab.se/ SHAMSUL SHAMSUL explores interpretability for chest X-ray pathology predictions using methods—Grad-CAM, LIME, SHAP, and LRP. It provides heatmaps and evaluation metrics for better insights into the..."
+  },
+  {
+    "slug": "2024-03-28-teaching",
+    "title": "PhD-work - Teaching",
+    "date": "2024-03-28",
+    "lang": "en",
+    "type": "PhD blog page",
+    "excerpt": "I was involved in the following courses: Internet of things services (IoT) Datorsystem / Computer Systems (DA) Introduction to Design for Creative and Immersive Technology (IDCI) I had previously been..."
+  },
+  {
     "slug": "2022-07-23-received-the-best-student-paper-award-at-the-ieee-cbms-2022-conference",
     "title": "Received the Best Student Paper Award at the IEEE CBMS 2022 Conference",
     "date": "2022-07-23",
