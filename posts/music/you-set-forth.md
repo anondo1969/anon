@@ -16,7 +16,7 @@ excerpt: Bengali poem "You set forth as I fade away" by Rabindranath Tagore.
 
 <details>
 
-<summary>Click to read</summary>
+<summary>Click to read </summary>
 
 তোমার হল শুরু, আমার হল সারা--
 তোমায় আমায় মিলে এমনি বহে ধারা ॥
