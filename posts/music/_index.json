@@ -1,5 +1,13 @@
 [
   {
+    "slug": "I-am-a-human-built-from-breaking",
+    "title": "আমি ভাঙায় গড়া মানুষ",
+    "date": "2026-07-04",
+    "lang": "bn",
+    "type": "শক্তি চট্টোপাধ্যায়",
+    "excerpt": "Bengali poem \"I am a human built from breaking\" by Shakti Chattopadhyay with a footnote on 'Valmiki'."
+  },
+  {
     "slug": "you-set-forth",
     "title": "তোমার হলো শুরু, আমার হলো সারা",
     "date": "2026-06-24",
@@ -38,13 +46,5 @@
     "lang": "bn",
     "type": "কাজী নজরুল ইসলাম",
     "excerpt": "Bengali poem \"Those iron gates of prison\" by Kazi Nazrul Islam."
-  },
-  {
-    "slug": "I-am-a-human-built-from-breaking",
-    "title": "I-am-a-human-built-from-breaking",
-    "date": "",
-    "lang": "en",
-    "type": "",
-    "excerpt": ""
   }
 ]
