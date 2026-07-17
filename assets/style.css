@@ -86,7 +86,7 @@ img{max-width:100%;height:auto}
 .chapter-num{font-family:var(--mono);font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--monsoon)}
 .chapter-rule{height:6px;margin:12px 0 0;background:var(--brush) repeat-x;background-size:120px 6px;width:min(420px,80%)}
 h1.display{font-size:clamp(2.3rem,6vw,3.7rem);font-weight:300;font-style:italic;line-height:1.1;letter-spacing:-.3px}
-h1.display b{font-weight:600;font-style:normal;color:var(--teal);background:linear-gradient(transparent 58%,rgba(63,125,120,.24) 58% 95%,transparent 95%);padding:0 .06em}
+h1.display b{font-weight:400;font-style:italic;color:var(--teal);background:linear-gradient(transparent 58%,rgba(63,125,120,.24) 58% 95%,transparent 95%);padding:0 .06em}
 .lead{font-size:1.16rem;color:var(--ink-soft);max-width:60ch;margin-top:18px}
 .label{font-family:var(--mono);font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--monsoon);display:block;margin:40px 0 14px}
 
@@ -361,3 +361,67 @@ body::before{
 }
 body::after{display:none!important;animation:none!important}
 html::before,html::after,.page{animation:none!important}
+
+
+/* ============================================================
+   VERSION 1C — SAME STATIC ART, SOFT SMALL-TO-PRESENT LOOP
+   No content change, no rain/fog animation, no artwork swap.
+   The exact same side images slowly emerge from a smaller,
+   more distant state into the current full state, then drift
+   back again. Think of it as a gentle breathing / fade-in zoom.
+   ============================================================ */
+
+@media (min-width:1280px){
+  html::before,
+  html::after{
+    will-change:transform, opacity, filter;
+    animation:borsha-soft-emerge 24s ease-in-out infinite !important;
+  }
+
+  html::before{
+    transform-origin:34% 84%;
+  }
+
+  html::after{
+    transform-origin:66% 84%;
+    animation-delay:1.2s !important;
+  }
+}
+
+@keyframes borsha-soft-emerge{
+  0%{
+    transform:scale(.78);
+    opacity:.18;
+    filter:blur(2px) saturate(.92);
+  }
+  22%{
+    transform:scale(.86);
+    opacity:.42;
+    filter:blur(1.4px) saturate(.95);
+  }
+  50%{
+    transform:scale(1);
+    opacity:1;
+    filter:blur(0) saturate(1);
+  }
+  78%{
+    transform:scale(.88);
+    opacity:.48;
+    filter:blur(1.2px) saturate(.95);
+  }
+  100%{
+    transform:scale(.78);
+    opacity:.18;
+    filter:blur(2px) saturate(.92);
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  html::before,
+  html::after{
+    animation:none !important;
+    transform:none !important;
+    opacity:1 !important;
+    filter:none !important;
+  }
+}
