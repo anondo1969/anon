@@ -364,18 +364,21 @@ html::before,html::after,.page{animation:none!important}
 
 
 /* ============================================================
-   VERSION 1C — SAME STATIC ART, SOFT SMALL-TO-PRESENT LOOP
-   No content change, no rain/fog animation, no artwork swap.
-   The exact same side images slowly emerge from a smaller,
-   more distant state into the current full state, then drift
-   back again. Think of it as a gentle breathing / fade-in zoom.
+   VERSION 1D — DREAM CYCLE (one-way, always born from fog)
+   No content change, no artwork swap. Every load begins with
+   an almost empty, foggy gutter: the images exist only as a
+   blurred breath. They come forward very, very slowly (most
+   of the cycle), reach their full clear form together, hold a
+   few seconds, then simply vanish into the same fog at a
+   normal pace: never moving backwards: and are born small
+   again. The cycle repeats forever.
    ============================================================ */
 
 @media (min-width:1280px){
   html::before,
   html::after{
     will-change:transform, opacity, filter;
-    animation:borsha-soft-emerge 24s ease-in-out infinite !important;
+    animation:borsha-soft-emerge 30s linear infinite !important;
   }
 
   html::before{
@@ -384,35 +387,60 @@ html::before,html::after,.page{animation:none!important}
 
   html::after{
     transform-origin:66% 84%;
-    animation-delay:1.2s !important;
   }
 }
 
 @keyframes borsha-soft-emerge{
+  /* born from fog: almost nothing */
   0%{
-    transform:scale(.78);
-    opacity:.18;
-    filter:blur(2px) saturate(.92);
+    transform:scale(.14);
+    opacity:0;
+    filter:blur(14px) saturate(.85);
   }
-  22%{
-    transform:scale(.86);
-    opacity:.42;
-    filter:blur(1.4px) saturate(.95);
+  8%{
+    transform:scale(.2);
+    opacity:.11;
+    filter:blur(11px) saturate(.87);
   }
-  50%{
+  /* the long dream: ~100s of slow coming-forward */
+  30%{
+    transform:scale(.42);
+    opacity:.3;
+    filter:blur(6.5px) saturate(.9);
+  }
+  55%{
+    transform:scale(.66);
+    opacity:.55;
+    filter:blur(3.5px) saturate(.94);
+  }
+  78%{
+    transform:scale(.9);
+    opacity:.85;
+    filter:blur(1.2px) saturate(.98);
+  }
+  /* full form, fully clear: both sides together */
+  86%{
     transform:scale(1);
     opacity:1;
     filter:blur(0) saturate(1);
   }
-  78%{
-    transform:scale(.88);
-    opacity:.48;
-    filter:blur(1.2px) saturate(.95);
+  90%{
+    transform:scale(1);
+    opacity:1;
+    filter:blur(0) saturate(1);
   }
+  /* the vanishing: normal pace, no moving backwards, just into fog */
+  96%{
+    transform:scale(1);
+    opacity:0;
+    filter:blur(7px) saturate(.9);
+  }
+  /* empty fog gap; the shrink back to small happens at ZERO
+     opacity, so nothing is ever seen dropping or collapsing */
   100%{
-    transform:scale(.78);
-    opacity:.18;
-    filter:blur(2px) saturate(.92);
+    transform:scale(.14);
+    opacity:0;
+    filter:blur(14px) saturate(.85);
   }
 }
 
