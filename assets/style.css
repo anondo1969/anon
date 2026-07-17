@@ -364,21 +364,24 @@ html::before,html::after,.page{animation:none!important}
 
 
 /* ============================================================
-   VERSION 1D — DREAM CYCLE (one-way, always born from fog)
-   No content change, no artwork swap. Every load begins with
-   an almost empty, foggy gutter: the images exist only as a
-   blurred breath. They come forward very, very slowly (most
-   of the cycle), reach their full clear form together, hold a
-   few seconds, then simply vanish into the same fog at a
-   normal pace: never moving backwards: and are born small
-   again. The cycle repeats forever.
+   VERSION 1E — ONE CONTINUOUS DREAM PER SITTING
+   The sitting begins with an almost empty, foggy gutter: the
+   images exist only as a blurred breath. Over about 30 seconds
+   they come forward very slowly, both sides arriving together,
+   and then simply stay: settled at 92% opacity so the paper
+   still breathes through the watercolor. The dream belongs to
+   the visit, not the page: app.js passes the time already
+   dreamt in as --dream-offset, so opening a post resumes the
+   emergence mid-flight instead of restarting it. One dream,
+   then company.
    ============================================================ */
 
 @media (min-width:1280px){
   html::before,
   html::after{
     will-change:transform, opacity, filter;
-    animation:borsha-soft-emerge 30s linear infinite !important;
+    animation:borsha-soft-emerge 30s linear 1 forwards !important;
+    animation-delay:var(--dream-offset,0s) !important;
   }
 
   html::before{
@@ -402,45 +405,27 @@ html::before,html::after,.page{animation:none!important}
     opacity:.11;
     filter:blur(11px) saturate(.87);
   }
-  /* the long dream: ~100s of slow coming-forward */
-  30%{
-    transform:scale(.42);
-    opacity:.3;
+  /* the long dream: slow coming-forward */
+  32%{
+    transform:scale(.44);
+    opacity:.32;
     filter:blur(6.5px) saturate(.9);
   }
-  55%{
-    transform:scale(.66);
-    opacity:.55;
+  58%{
+    transform:scale(.68);
+    opacity:.58;
     filter:blur(3.5px) saturate(.94);
   }
-  78%{
+  82%{
     transform:scale(.9);
-    opacity:.85;
+    opacity:.84;
     filter:blur(1.2px) saturate(.98);
   }
-  /* full form, fully clear: both sides together */
-  86%{
-    transform:scale(1);
-    opacity:1;
-    filter:blur(0) saturate(1);
-  }
-  90%{
-    transform:scale(1);
-    opacity:1;
-    filter:blur(0) saturate(1);
-  }
-  /* the vanishing: normal pace, no moving backwards, just into fog */
-  96%{
-    transform:scale(1);
-    opacity:0;
-    filter:blur(7px) saturate(.9);
-  }
-  /* empty fog gap; the shrink back to small happens at ZERO
-     opacity, so nothing is ever seen dropping or collapsing */
+  /* full form: settled, quiet, paper breathing through */
   100%{
-    transform:scale(.14);
-    opacity:0;
-    filter:blur(14px) saturate(.85);
+    transform:scale(1);
+    opacity:.92;
+    filter:blur(0) saturate(1);
   }
 }
 
@@ -449,7 +434,44 @@ html::before,html::after,.page{animation:none!important}
   html::after{
     animation:none !important;
     transform:none !important;
-    opacity:1 !important;
+    opacity:.92 !important;
     filter:none !important;
+  }
+}
+
+/* ============================================================
+   VERSION 1F — PAINTED UI (fused atoms)
+   The last crisp SaaS atoms dissolved into the watercolor:
+   hard colored left bars on cards become soft diagonal tint
+   washes in the same pigments (teal, kadam peach, monsoon
+   blue), and the chips take a faint wash instead of a crisp
+   outline. Same brush everywhere. No layout change.
+   ============================================================ */
+.card,.card.clay,.card.sage{border:1px solid var(--rule);border-radius:6px}
+.card{background:linear-gradient(135deg,rgba(46,125,125,.1),rgba(46,125,125,.015) 62%),rgba(255,255,255,.72)}
+.card.clay{background:linear-gradient(135deg,rgba(217,150,115,.16),rgba(217,150,115,.025) 62%),rgba(255,255,255,.72)}
+.card.sage{background:linear-gradient(135deg,rgba(104,136,150,.15),rgba(104,136,150,.02) 62%),rgba(255,255,255,.72)}
+.doc-card{border:1px solid var(--rule);background:linear-gradient(135deg,rgba(217,150,115,.14),rgba(217,150,115,.02) 60%),rgba(255,255,255,.72)}
+.track{border:1px solid var(--rule);background:linear-gradient(135deg,rgba(104,136,150,.13),rgba(104,136,150,.02) 60%),rgba(255,255,255,.72)}
+.pill{border:1px solid rgba(104,136,150,.26);background:linear-gradient(135deg,rgba(104,136,150,.1),rgba(46,125,125,.05));color:var(--ink-soft)}
+.pub-links a,.chips a{border-color:rgba(46,125,125,.28)}
+.pub-links a:hover,.chips a:hover{background:rgba(46,125,125,.08)}
+
+
+/* ============================================================
+   VERSION 1G — DREAM MEMORY (pairs with the snippet in app.js)
+   app.js marks <html class="dreamt"> once the sitting's
+   30-second dream has fully finished. In that case the
+   animation is skipped entirely and both artworks stand
+   settled at their quiet 92% from the very first frame.
+   Closing the tab forgets: the next visit is born in fog.
+   ============================================================ */
+@media (min-width:1280px){
+  html.dreamt::before,
+  html.dreamt::after{
+    animation:none !important;
+    transform:scale(1);
+    opacity:.92;
+    filter:blur(0) saturate(1);
   }
 }
