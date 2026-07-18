@@ -330,7 +330,7 @@ html::before,html::after{
   background-size:cover;
 }
 html::before{left:0;background-image:url("boy-rain-left.png")}
-html::after{right:0;background-image:url("girl-from-dream.png")}
+html::after{right:0;background-image:url("girl-rain-right.png")}
 
 /* The center is intentionally protected from side artwork. */
 @media (min-width:1280px){
