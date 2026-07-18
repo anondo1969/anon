@@ -10,7 +10,7 @@ excerpt: Bengali poem "You set forth as I fade away" by Rabindranath Tagore.
 
 <div class="song-sub latin">Bengali poem "You set forth as I fade away" by Rabindranath Tagore.</div>
 
-<div class="track"><span class="track-tag">AI Music · 🌿</span><audio controls preload="none" src="media/you-set-forth.mp3">Your browser does not support the audio element.</audio></div>
+<div class="track"><span class="track-tag">AI Music · 🌿</span><audio controls preload="none" src="media/you-set-forth-as-I-fade-away.mp3">Your browser does not support the audio element.</audio></div>
 
 <div class="lyrics"><div class="lyrics-lang">Lyrics · বাংলা</div>
 
