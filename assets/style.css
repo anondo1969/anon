@@ -488,3 +488,8 @@ html::after{
     linear-gradient(to right,transparent 0,#000 160px);
   mask-composite:intersect;
 }
+
+/* footer colophon: the question that stands between the two children */
+.colophon{max-width:56ch;margin:4px auto 14px}
+.colophon .cq-bn{font-family:'Noto Serif Bengali','FreeSerif',serif;font-size:.92rem;line-height:1.9;color:var(--ink-soft);margin:0}
+.colophon .cq-en{font-style:italic;font-size:.86rem;color:var(--ink-soft);opacity:.85;margin:4px 0 0}
