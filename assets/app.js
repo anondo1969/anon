@@ -11,6 +11,39 @@
    See chapters/README.md for how to add or edit a chapter.
    ============================================================ */
 
+/* ---- dream memory (one continuous dream per sitting) ----
+   The side-art fog dream (style.css, VERSION 1E) belongs to
+   the visit, not to any single page. This IIFE runs the moment
+   the script is parsed, on index.html and post.html alike.
+   The first document of the sitting records when the dream was
+   born; every later document computes how long it has been
+   dreaming. Still inside the 30 seconds: the animation resumes
+   mid-flight through a negative delay (--dream-offset), both
+   sides staying in sync. Past the 30 seconds: <html> is marked
+   .dreamt and the CSS (VERSION 1G) shows the settled art from
+   the first frame. sessionStorage dies with the tab, so a
+   genuinely new visit is always born in fog. If storage is
+   unavailable (some private modes), every page simply dreams
+   from the start, the old behaviour.
+   DREAM_MS must match the 30s in style.css. */
+(function(){
+  var DREAM_MS = 30000;
+  try{
+    var KEY = 'mahbub-dream-born';
+    var born = Number(sessionStorage.getItem(KEY));
+    if(!born){
+      born = Date.now();
+      sessionStorage.setItem(KEY, String(born));
+    }
+    var elapsed = Date.now() - born;
+    if(elapsed >= DREAM_MS){
+      document.documentElement.classList.add('dreamt');
+    }else if(elapsed > 0){
+      document.documentElement.style.setProperty('--dream-offset', (-elapsed / 1000) + 's');
+    }
+  }catch(_){ /* storage unavailable: every page dreams, as before */ }
+})();
+
 /* ---- nav drawer ---- */
 function toggleNav(){
   document.getElementById('panel').classList.toggle('open');
