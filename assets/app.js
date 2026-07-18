@@ -42,6 +42,20 @@
       document.documentElement.style.setProperty('--dream-offset', (-elapsed / 1000) + 's');
     }
   }catch(_){ /* storage unavailable: every page dreams, as before */ }
+
+  /* Back/forward cache guard: Safari and Chrome on macOS often
+     restore a page from memory instead of reloading it, so the
+     code above never re-runs. pageshow fires on every return:
+     re-check the clock and settle the art if the dream has
+     finished in the meantime. */
+  window.addEventListener('pageshow', function(){
+    try{
+      var born2 = Number(sessionStorage.getItem('mahbub-dream-born'));
+      if(born2 && Date.now() - born2 >= DREAM_MS){
+        document.documentElement.classList.add('dreamt');
+      }
+    }catch(_){}
+  });
 })();
 
 /* ---- nav drawer ---- */
