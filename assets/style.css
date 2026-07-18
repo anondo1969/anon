@@ -330,7 +330,7 @@ html::before,html::after{
   background-size:cover;
 }
 html::before{left:0;background-image:url("boy-rain-left.png")}
-html::after{right:0;background-image:url("flowers-rain-right-soft.png")}
+html::after{right:0;background-image:url("girl-from-dream.png")}
 
 /* The center is intentionally protected from side artwork. */
 @media (min-width:1280px){
@@ -474,4 +474,17 @@ html::before,html::after,.page{animation:none!important}
     opacity:.92;
     filter:blur(0) saturate(1);
   }
+}
+/* Blend the girl's inner edge into the paper, like the boy's side:
+   her artwork's left boundary fades from fully transparent to full
+   art over 160px, combined with the existing top/bottom fade. */
+html::after{
+  -webkit-mask-image:
+    linear-gradient(transparent,#000 10% 90%,transparent),
+    linear-gradient(to right,transparent 0,#000 160px);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(transparent,#000 10% 90%,transparent),
+    linear-gradient(to right,transparent 0,#000 160px);
+  mask-composite:intersect;
 }
