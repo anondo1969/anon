@@ -17,17 +17,18 @@
    the script is parsed, on index.html and post.html alike.
    The first document of the sitting records when the dream was
    born; every later document computes how long it has been
-   dreaming. Still inside the 30 seconds: the animation resumes
+   dreaming. Still inside the 10 seconds: the animation resumes
    mid-flight through a negative delay (--dream-offset), both
-   sides staying in sync. Past the 30 seconds: <html> is marked
-   .dreamt and the CSS (VERSION 1G) shows the settled art from
-   the first frame. sessionStorage dies with the tab, so a
-   genuinely new visit is always born in fog. If storage is
+   sides staying in sync. Past the 10 seconds: <html> is marked
+   .dreamt and the CSS (VERSION 1G) shows the receded art, at 
+   55%, from the first frame. At ten seconds this is the common
+   case: the dream is a first-load event. sessionStorage dies
+   with the tab, so a genuinely new visit is always born in fog. If storage is
    unavailable (some private modes), every page simply dreams
    from the start, the old behaviour.
-   DREAM_MS must match the 30s in style.css. */
+   DREAM_MS must match the 10s in style.css. */
 (function(){
-  var DREAM_MS = 30000;
+  var DREAM_MS = 10000;
   try{
     var KEY = 'mahbub-dream-born';
     var born = Number(sessionStorage.getItem(KEY));

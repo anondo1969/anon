@@ -365,22 +365,28 @@ html::before,html::after,.page{animation:none!important}
 
 /* ============================================================
    VERSION 1E — ONE CONTINUOUS DREAM PER SITTING
-   The sitting begins with an almost empty, foggy gutter: the
-   images exist only as a blurred breath. Over about 30 seconds
-   they come forward very slowly, both sides arriving together,
-   and then simply stay: settled at 92% opacity so the paper
-   still breathes through the watercolor. The dream belongs to
-   the visit, not the page: app.js passes the time already
-   dreamt in as --dream-offset, so opening a post resumes the
-   emergence mid-flight instead of restarting it. One dream,
-   then company.
+   The sitting begins with a half-formed, foggy gutter: the
+   children are there, but blurred and far off. Ten seconds,
+   in three movements, both sides in step:
+
+     0 → 6s     they come forward, out of fog into full form,
+                decelerating into arrival at 92% opacity
+     6 → 7.5s   they simply stand there, fully present
+     7.5 → 10s  they recede: 92% → 55%, with a whisper of
+                drift and blur, and stay that way
+
+   The dream belongs to the visit, not the page: app.js passes
+   the time already dreamt in as --dream-offset, so opening a
+   post resumes the sequence mid-flight instead of restarting
+   it. One dream, then company.
+   DREAM_MS in app.js must equal the 10s duration below.
    ============================================================ */
 
 @media (min-width:1280px){
   html::before,
   html::after{
     will-change:transform, opacity, filter;
-    animation:borsha-soft-emerge 30s linear 1 forwards !important;
+    animation:borsha-soft-emerge 10s linear 1 forwards !important;
     animation-delay:var(--dream-offset,0s) !important;
   }
 
@@ -393,40 +399,28 @@ html::before,html::after,.page{animation:none!important}
   }
 }
 
+/* A timing function written inside a keyframe governs the segment
+   that STARTS at that keyframe. Two of them do the smoothing work:
+   the one at 49% decelerates the last stretch of the emergence so
+   it glides to a stop instead of hitting a wall, and the one at 75%
+   eases the whole recede in and out so there is no corner where the
+   fade begins. Note that !important is ignored inside @keyframes,
+   so it must not appear here. */
 @keyframes borsha-soft-emerge{
-  /* born from fog: almost nothing */
-  0%{
-    transform:scale(.14);
-    opacity:0;
-    filter:blur(14px) saturate(.85);
-  }
-  8%{
-    transform:scale(.2);
-    opacity:.11;
-    filter:blur(11px) saturate(.87);
-  }
-  /* the long dream: slow coming-forward */
-  32%{
-    transform:scale(.44);
-    opacity:.32;
-    filter:blur(6.5px) saturate(.9);
-  }
-  58%{
-    transform:scale(.68);
-    opacity:.58;
-    filter:blur(3.5px) saturate(.94);
-  }
-  82%{
-    transform:scale(.9);
-    opacity:.84;
-    filter:blur(1.2px) saturate(.98);
-  }
-  /* full form: settled, quiet, paper breathing through */
-  100%{
-    transform:scale(1);
-    opacity:.92;
-    filter:blur(0) saturate(1);
-  }
+  /* emergence: 0 → 6s */
+  0%   { transform:scale(.5);  opacity:.12; filter:blur(8px) saturate(.85); }
+  5%   { transform:scale(.54); opacity:.2;  filter:blur(6.5px) saturate(.87); }
+  19%  { transform:scale(.67); opacity:.4;  filter:blur(4.5px) saturate(.9); }
+  35%  { transform:scale(.81); opacity:.62; filter:blur(2.8px) saturate(.94); }
+  49%  { transform:scale(.94); opacity:.84; filter:blur(1.1px) saturate(.98);
+         animation-timing-function:cubic-bezier(.22,.61,.36,1); }
+  /* full presence, held: 6 → 7.5s */
+  60%  { transform:scale(1);   opacity:.92; filter:blur(0) saturate(1); }
+  75%  { transform:scale(1);   opacity:.92; filter:blur(0) saturate(1);
+         animation-timing-function:cubic-bezier(.4,0,.5,1); }
+  /* recede, then stay: 7.5 → 10s.
+     The endpoint here must match html.dreamt below, value for value. */
+  100% { transform:scale(1.015); opacity:.55; filter:blur(.6px) saturate(.98); }
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -434,7 +428,8 @@ html::before,html::after,.page{animation:none!important}
   html::after{
     animation:none !important;
     transform:none !important;
-    opacity:.92 !important;
+    /* the resting state, shown immediately and never animated */
+    opacity:.55 !important;
     filter:none !important;
   }
 }
@@ -461,18 +456,22 @@ html::before,html::after,.page{animation:none!important}
 /* ============================================================
    VERSION 1G — DREAM MEMORY (pairs with the snippet in app.js)
    app.js marks <html class="dreamt"> once the sitting's
-   30-second dream has fully finished. In that case the
-   animation is skipped entirely and both artworks stand
-   settled at their quiet 92% from the very first frame.
+   10-second dream has fully finished. In that case the
+   animation is skipped entirely and both artworks stand at
+   their receded 55% from the very first frame. At ten seconds
+   this is the common case: the dream is a first-load event,
+   and 55% is what the site normally looks like.
    Closing the tab forgets: the next visit is born in fog.
+   These three values must stay identical to the 100% keyframe
+   above, or the art jumps between the first page and the next.
    ============================================================ */
 @media (min-width:1280px){
   html.dreamt::before,
   html.dreamt::after{
     animation:none !important;
-    transform:scale(1);
-    opacity:.92;
-    filter:blur(0) saturate(1);
+    transform:scale(1.015);
+    opacity:.55;
+    filter:blur(.6px) saturate(.98);
   }
 }
 /* Blend the girl's inner edge into the paper, like the boy's side:
