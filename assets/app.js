@@ -11,53 +11,6 @@
    See chapters/README.md for how to add or edit a chapter.
    ============================================================ */
 
-/* ---- dream memory (one continuous dream per sitting) ----
-   The side-art fog dream (style.css, VERSION 1E) belongs to
-   the visit, not to any single page. This IIFE runs the moment
-   the script is parsed, on index.html and post.html alike.
-   The first document of the sitting records when the dream was
-   born; every later document computes how long it has been
-   dreaming. Still inside the 10 seconds: the animation resumes
-   mid-flight through a negative delay (--dream-offset), both
-   sides staying in sync. Past the 10 seconds: <html> is marked
-   .dreamt and the CSS (VERSION 1G) shows the receded art, at 
-   55%, from the first frame. At ten seconds this is the common
-   case: the dream is a first-load event. sessionStorage dies
-   with the tab, so a genuinely new visit is always born in fog. If storage is
-   unavailable (some private modes), every page simply dreams
-   from the start, the old behaviour.
-   DREAM_MS must match the 10s in style.css. */
-(function(){
-  var DREAM_MS = 10000;
-  try{
-    var KEY = 'mahbub-dream-born';
-    var born = Number(sessionStorage.getItem(KEY));
-    if(!born){
-      born = Date.now();
-      sessionStorage.setItem(KEY, String(born));
-    }
-    var elapsed = Date.now() - born;
-    if(elapsed >= DREAM_MS){
-      document.documentElement.classList.add('dreamt');
-    }else if(elapsed > 0){
-      document.documentElement.style.setProperty('--dream-offset', (-elapsed / 1000) + 's');
-    }
-  }catch(_){ /* storage unavailable: every page dreams, as before */ }
-
-  /* Back/forward cache guard: Safari and Chrome on macOS often
-     restore a page from memory instead of reloading it, so the
-     code above never re-runs. pageshow fires on every return:
-     re-check the clock and settle the art if the dream has
-     finished in the meantime. */
-  window.addEventListener('pageshow', function(){
-    try{
-      var born2 = Number(sessionStorage.getItem('mahbub-dream-born'));
-      if(born2 && Date.now() - born2 >= DREAM_MS){
-        document.documentElement.classList.add('dreamt');
-      }
-    }catch(_){}
-  });
-})();
 
 /* ---- nav drawer ---- */
 function toggleNav(){

@@ -1,0 +1,302 @@
+/* ============================================================
+   mahbub.se : art.css
+   বর্ষা — the two children, and the dream they arrive in.
+
+   Everything about the artwork lives here: the images, the
+   geometry at each screen size, the emergence sequence, and
+   the settled state afterwards. style.css knows nothing about
+   any of it.
+
+   HOW IT IS LOADED
+   This file must be linked in <head> BEFORE art.js, because
+   art.js reads --art-dur out of the computed style to know how
+   long the dream lasts. Link, then script, then everything else.
+
+   TWO GEOMETRIES, THREE SIZES
+   Not phone/tablet/laptop: the real question is whether the
+   screen has room for side gutters.
+     under 1280px   the reading column is the whole screen, so
+                    the children sit in bands, girl along the
+                    top pushed right, boy along the bottom
+                    pushed left. Text runs on the diagonal
+                    between them. Fast and faint, because
+                    nobody waits ten seconds to read.
+     1280px and up  the original side gutters, unchanged.
+   A portrait tablet gets the bands. A landscape tablet or a
+   small laptop gets the gutters. Rotating the device switches
+   between them.
+
+   TUNING
+   Every number worth changing is a custom property in the
+   :root blocks below. Change --art-peak and the whole
+   emergence ramp rescales with it: the keyframes are written
+   as fractions of the peak, not as fixed numbers, so the curve
+   keeps its shape and nothing can overshoot. Same for blur.
+   The scale ramp is literal. If you change --art-scale-from,
+   the five values in the keyframes must move with it, and they
+   must rise monotonically or the art will grow and then shrink
+   mid-flight. Band heights are unitless numbers so the same
+   value can be spent as vh and then again as dvh: the second
+   declaration is simply dropped by any browser too old to
+   parse it, and the phone's collapsing URL bar stops mattering
+   on every browser that is not.
+   ============================================================ */
+
+
+/* ---- tunables : bands (phones) ---- */
+:root{
+  --art-dur:4s;             /* whole sequence: emerge + hold + recede */
+  --art-peak:.35;           /* opacity at full presence */
+  --art-rest:.12;           /* opacity it settles at, and stays */
+  --art-band-top:34;        /* girl's height along the top, in vh */
+  --art-band-bottom:30;     /* boy's height along the bottom, in vh */
+  --art-top-gap:25px;      /* clearance for the topbar, which sits
+                               over the art: without it her head is
+                               clipped by the header. Measure your
+                               topbar and add ~15px of air. */
+
+  --art-ar-girl:.562;       /* her artwork's width ÷ height */
+  --art-ar-boy:.569;        /* his */
+
+  --art-scale-from:.5;      /* half size at the first frame */
+  --art-blur-from:8px;      /* fog at the first frame */
+  --art-scale-end:1.015;    /* a whisper of drift as it recedes */
+  --art-blur-end:.6px;      /* and a whisper of softness */
+}
+
+/* ---- tunables : bands (portrait tablets) ---- */
+@media (min-width:600px){
+  :root{
+    --art-dur:5s;
+    --art-peak:.45;
+    --art-rest:.16;
+    --art-band-top:32;
+    --art-band-bottom:28;
+    --art-top-gap:25px;
+  }
+}
+
+/* ---- tunables : side gutters (laptops and up) ---- */
+@media (min-width:1280px){
+  :root{
+    --art-dur:10s;
+    --art-peak:.92;
+    --art-rest:.55;
+    --gutter-art-w:min(29vw,480px);
+  }
+}
+@media (min-width:1680px){
+  :root{ --gutter-art-w:min(28vw,510px) }
+}
+
+
+/* ============================================================
+   FOUNDATION
+   Only what both geometries share. Each geometry below sets
+   its own box, its own crop, and its own mask.
+   ============================================================ */
+html::before,
+html::after{
+  content:"";
+  display:none;
+  position:fixed;
+  z-index:1;
+  pointer-events:none;
+  background-repeat:no-repeat;
+  will-change:transform, opacity, filter;
+}
+
+
+/* ============================================================
+   GEOMETRY A — BANDS (under 1280px)
+   The artwork is a tall composition: rain falling, a child
+   running toward you, the splash, the reflection. Stretched
+   across a wide band it would crop to a torso, so instead it
+   is sized by HEIGHT and pushed to one side, whole. Each box
+   is cut to the artwork's own aspect ratio so that the mask
+   feathers the picture's real edge; the rest of the screen is
+   bare paper for the text.
+   Both children grow out of their own reflection, which is why
+   the transform origin sits at the waterline.
+   ============================================================ */
+@media (max-width:1279px){
+  html::before,
+  html::after{
+    display:block;
+    background-size:cover;
+    background-position:center bottom;
+    animation:borsha-arrive var(--art-dur) linear 1 forwards;
+    animation-delay:var(--dream-offset,0s);
+  }
+
+  /* girl : top, pushed right.
+     The box is the artwork's own shape, height first and width
+     derived from her aspect ratio, so the mask lands on HER edge
+     and not somewhere out in the empty part of a band. Get this
+     wrong and her rectangle shows as a hard vertical line. */
+  html::after{
+    top:var(--art-top-gap);
+    right:0;
+    height:calc(var(--art-band-top) * 1vh);
+    height:calc(var(--art-band-top) * 1dvh);
+    width:calc(var(--art-band-top) * 1vh * var(--art-ar-girl));
+    width:calc(var(--art-band-top) * 1dvh * var(--art-ar-girl));
+    background-image:url("girl-sm.webp");
+    transform-origin:50% 100%;
+    -webkit-mask-image:
+      linear-gradient(transparent,#000 18% 76%,transparent),
+      linear-gradient(to left,#000 58%,transparent);
+    -webkit-mask-composite:source-in;
+    mask-image:
+      linear-gradient(transparent,#000 18% 76%,transparent),
+      linear-gradient(to left,#000 58%,transparent);
+    mask-composite:intersect;
+  }
+
+  /* boy : bottom, pushed left, mirrored */
+  html::before{
+    bottom:0;
+    left:0;
+    height:calc(var(--art-band-bottom) * 1vh);
+    height:calc(var(--art-band-bottom) * 1dvh);
+    width:calc(var(--art-band-bottom) * 1vh * var(--art-ar-boy));
+    width:calc(var(--art-band-bottom) * 1dvh * var(--art-ar-boy));
+    background-image:url("boy-sm.webp");
+    transform-origin:50% 100%;
+    -webkit-mask-image:
+      linear-gradient(to top,#000 88%,transparent),
+      linear-gradient(to right,#000 58%,transparent);
+    -webkit-mask-composite:source-in;
+    mask-image:
+      linear-gradient(to top,#000 88%,transparent),
+      linear-gradient(to right,#000 58%,transparent);
+    mask-composite:intersect;
+  }
+}
+
+
+/* ============================================================
+   GEOMETRY B — SIDE GUTTERS (1280px and up)
+   The original composition, untouched: boy left, girl right,
+   both starting below the topbar. The centre is intentionally
+   protected from side artwork, and the girl's inner edge
+   dissolves into the paper over 160px so her rectangle never
+   shows against the reading column.
+   ============================================================ */
+@media (min-width:1280px){
+  html::before,
+  html::after{
+    display:block;
+    top:78px;
+    bottom:0;
+    width:var(--gutter-art-w);
+    background-position:center bottom;
+    background-size:cover;
+    animation:borsha-arrive var(--art-dur) linear 1 forwards;
+    animation-delay:var(--dream-offset,0s);
+    -webkit-mask-image:linear-gradient(transparent,#000 10% 90%,transparent);
+    mask-image:linear-gradient(transparent,#000 10% 90%,transparent);
+  }
+
+  html::before{
+    left:0;
+    background-image:url("boy-lg.webp");
+    transform-origin:34% 84%;
+  }
+
+  html::after{
+    right:0;
+    background-image:url("girl-lg.webp");
+    transform-origin:66% 84%;
+    -webkit-mask-image:
+      linear-gradient(transparent,#000 10% 90%,transparent),
+      linear-gradient(to right,transparent 0,#000 160px);
+    -webkit-mask-composite:source-in;
+    mask-image:
+      linear-gradient(transparent,#000 10% 90%,transparent),
+      linear-gradient(to right,transparent 0,#000 160px);
+    mask-composite:intersect;
+  }
+}
+
+
+/* ============================================================
+   THE SEQUENCE
+   Three movements, in proportion, so it holds its shape at any
+   --art-dur:
+     0 → 60%    they come forward, out of fog into full form,
+                decelerating into arrival
+     60 → 75%   they simply stand there
+     75 → 100%  they recede to --art-rest, and stay
+
+   A timing function written inside a keyframe governs the
+   segment that STARTS at that keyframe. The one at 49%
+   decelerates the last stretch of the emergence so it glides
+   to a stop instead of hitting a wall. The one at 75% eases
+   the whole recede in and out so there is no corner where the
+   fade begins.
+   !important is ignored inside @keyframes. Do not add it here.
+   ============================================================ */
+@keyframes borsha-arrive{
+  0%   { transform:scale(.5);
+         opacity:calc(var(--art-peak) * .13);
+         filter:blur(var(--art-blur-from)) saturate(.85); }
+  5%   { transform:scale(.54);
+         opacity:calc(var(--art-peak) * .22);
+         filter:blur(calc(var(--art-blur-from) * .81)) saturate(.87); }
+  19%  { transform:scale(.67);
+         opacity:calc(var(--art-peak) * .43);
+         filter:blur(calc(var(--art-blur-from) * .56)) saturate(.9); }
+  35%  { transform:scale(.81);
+         opacity:calc(var(--art-peak) * .67);
+         filter:blur(calc(var(--art-blur-from) * .35)) saturate(.94); }
+  49%  { transform:scale(.94);
+         opacity:calc(var(--art-peak) * .91);
+         filter:blur(calc(var(--art-blur-from) * .14)) saturate(.98);
+         animation-timing-function:cubic-bezier(.22,.61,.36,1); }
+
+  60%  { transform:scale(1);
+         opacity:var(--art-peak);
+         filter:blur(0) saturate(1); }
+  75%  { transform:scale(1);
+         opacity:var(--art-peak);
+         filter:blur(0) saturate(1);
+         animation-timing-function:cubic-bezier(.4,0,.5,1); }
+
+  100% { transform:scale(var(--art-scale-end));
+         opacity:var(--art-rest);
+         filter:blur(var(--art-blur-end)) saturate(.98); }
+}
+
+
+/* ============================================================
+   THE SETTLED STATE
+   art.js marks <html class="dreamt"> once the sitting's dream
+   has finished, and from then on every page shows the receded
+   art from its first frame instead of replaying the sequence.
+   Closing the tab forgets: the next visit is born in fog.
+
+   These values are the 100% keyframe, written once as the same
+   variables, so the two can never drift apart. The class beats
+   the plain html::before selector on specificity, so no
+   !important is needed anywhere in this file.
+   ============================================================ */
+html.dreamt::before,
+html.dreamt::after{
+  animation:none;
+  transform:scale(var(--art-scale-end));
+  opacity:var(--art-rest);
+  filter:blur(var(--art-blur-end)) saturate(.98);
+}
+
+/* Someone who asked for less motion gets the resting state
+   immediately, with no movement and no blur at all. */
+@media (prefers-reduced-motion:reduce){
+  html::before,
+  html::after{
+    animation:none !important;
+    transform:none !important;
+    opacity:var(--art-rest) !important;
+    filter:none !important;
+  }
+}
