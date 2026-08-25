@@ -1,5 +1,5 @@
 /* ============================================================
-   mahbub.se : app.js
+   mahbub.se : app.js, new
    Nav drawer, manifest-driven "Contents" menu, chapter loader,
    and Markdown post-list loaders.
 
