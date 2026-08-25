@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 · Page not found · এই পাতাটি নেই · mahbub.se</title>
+
+<meta name="robots" content="noindex, follow">
+<meta name="description" content="This page does not exist on mahbub.se. Find your way back to the beginning.">
+
+<!-- ============================================================
+     EVERY PATH HERE STARTS WITH A SLASH, ON PURPOSE.
+     GitHub Pages serves this one file for any missing address, but
+     the browser keeps showing the address that failed. If someone
+     mistypes /writing/some/deep/path, a relative href like
+     "assets/style.css" would be looked for at /writing/some/assets/
+     and would fail too, leaving an unstyled page. Root-absolute
+     paths always resolve. Do not change them to relative ones.
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Spline+Sans+Mono:wght@400;500&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="icon" type="image/png" href="/media/icon.png">
+<link rel="apple-touch-icon" href="/media/icon.png">
+
+<style>
+/* ------------------------------------------------------------
+   404-only styling. Everything else comes from style.css.
+   art.css is deliberately NOT loaded here: the two children are
+   the subject of this page rather than its margins, and having
+   them in the gutters as well would put four of them on screen.
+   ------------------------------------------------------------ */
+
+/* the topbar's right-hand side, standing in for the burger */
+.to-contents{
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--teal);text-decoration:none;
+  border-bottom:1px solid rgba(63,125,120,.3);padding-bottom:3px;
+}
+.to-contents:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* the stage: 404 at the top, then the two children standing far
+   apart in the same water with nothing between them */
+.lost{margin:clamp(26px,6vh,58px) 0 4px}
+
+.lost-head{text-align:center;margin-bottom:clamp(14px,3vh,30px)}
+.lost-num{
+  display:block;font-family:var(--serif);font-weight:300;
+  font-size:clamp(3.2rem,13vw,7.6rem);line-height:1;letter-spacing:.08em;
+  color:var(--ink);opacity:.88;
+}
+.lost-cap{
+  display:block;font-family:var(--mono);font-weight:500;
+  font-size:clamp(.82rem,1.9vw,1.3rem);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--monsoon);
+  margin-top:clamp(10px,1.8vh,20px);
+}
+
+/* The stage is a grid so the same three pieces can sit side by side
+   on a wide screen and restack on a narrow one, without touching the
+   markup. Named areas make the two arrangements readable:
+     wide     boy | poem | girl        with the waterline under all three
+     narrow   boy | girl               waterline, then the poem beneath */
+.lost-stage{
+  display:grid;
+  /* start, not end: the poem box is taller than the children, and
+     bottom-aligning them dropped both of them halfway down the page.
+     Their tops now line up with the box, and the box stretches to
+     their height, so all three share a top and a bottom edge. */
+  align-items:start;
+  column-gap:clamp(14px,2.4vw,38px);
+  grid-template-columns:auto minmax(0,1fr) auto;
+  grid-template-areas:
+    "boy poem girl"
+    "line line line";
+}
+.lost-fig.boy{grid-area:boy}
+.lost-fig.girl{grid-area:girl}
+.poembox{grid-area:poem}
+.waterline{grid-area:line}
+
+/* On a wide screen the stage steps outside the reading column, so the
+   two children move out toward the margins and the poem gets room to
+   breathe between them. 48px of slack keeps a desktop scrollbar from
+   pushing anything sideways. */
+@media (min-width:720px){
+  .lost{
+    width:min(1240px,calc(100vw - 48px));
+    position:relative;left:50%;transform:translateX(-50%);
+  }
+}
+
+@media (max-width:719px){
+  .lost-stage{
+    grid-template-columns:auto auto;
+    justify-content:space-between;
+    grid-template-areas:
+      "boy  girl"
+      "line line"
+      "poem poem";
+  }
+  .poembox{margin-top:26px}
+}
+.lost-fig{
+  width:clamp(84px,11.5vw,176px);
+  aspect-ratio:.565;
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  background-size:contain;
+  opacity:.62;
+  /* Feather all four edges. The artwork carries its own cream
+     background, so without a horizontal fade as well as a vertical
+     one each child arrives inside a visible rectangle. */
+  -webkit-mask-image:
+    linear-gradient(transparent,#000 15% 88%,transparent),
+    linear-gradient(to right,transparent,#000 30%,#000 70%,transparent);
+  -webkit-mask-composite:source-in;
+  mask-image:
+    linear-gradient(transparent,#000 15% 88%,transparent),
+    linear-gradient(to right,transparent,#000 30%,#000 70%,transparent);
+  mask-composite:intersect;
+  animation:lost-rise 2.4s cubic-bezier(.22,.61,.36,1) both;
+}
+.lost-fig.boy{background-image:url("/assets/boy-sm.webp")}
+.lost-fig.girl{background-image:url("/assets/girl-sm.webp");animation-delay:.4s}
+
+@keyframes lost-rise{
+  from{opacity:0;transform:translateY(14px) scale(.94);filter:blur(7px) saturate(.85)}
+  to  {opacity:.62;transform:none;filter:blur(0) saturate(1)}
+}
+
+/* the poem box: no fill, just a ruled frame over the paper.
+   It stretches to the children's height and centres its verse, so
+   the three pieces of the stage line up top and bottom. */
+.poembox{
+  background:transparent;
+  border:1px solid var(--rule);
+  border-radius:8px;
+  padding:clamp(20px,2.4vw,32px) clamp(16px,2.4vw,30px);
+  margin:0;
+  text-align:center;
+  align-self:stretch;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.poem-cols{width:100%}
+.poem-en{
+  font-style:italic;font-weight:300;
+  font-size:clamp(.95rem,1.2vw,1.05rem);line-height:1.95;
+  color:var(--ink);max-width:44ch;margin:0 auto;
+}
+.poem-bn{
+  font-family:var(--bn);font-style:normal;font-weight:400;
+  font-size:clamp(.9rem,1.1vw,.98rem);line-height:2.2;
+  color:var(--ink);max-width:42ch;margin:0 auto;
+}
+.poem-div{
+  height:6px;width:min(64%,260px);margin:clamp(18px,2.4vh,26px) auto;
+  background:var(--brush) repeat-x center;background-size:120px 6px;opacity:.65;
+}
+
+/* Two columns of verse instead of one tall stack. Only where there is
+   genuinely room: below this the box is too narrow and every line
+   would wrap, so the poems go back to one above the other. */
+@media (min-width:1180px){
+  .poem-cols{
+    display:grid;
+    grid-template-columns:1fr 1px 1fr;
+    column-gap:clamp(22px,2vw,36px);
+    align-items:center;
+  }
+  .poem-div{
+    height:100%;width:1px;margin:0;background-size:auto;
+    background:linear-gradient(to bottom,transparent,var(--rule) 16%,var(--rule) 84%,transparent);
+    opacity:1;
+  }
+}
+
+/* the waterline they are all standing on, and its reflection */
+.waterline{
+  height:1px;
+  background:linear-gradient(to right,transparent,rgba(91,122,133,.34) 24%,rgba(91,122,133,.34) 76%,transparent);
+}
+.waterline::after{
+  content:"";display:block;height:46px;
+  background:linear-gradient(to bottom,rgba(91,122,133,.09),transparent);
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);
+}
+
+/* The closing prose. One size, one colour, one rhythm: the ragged
+   <br> lines and the two different paragraph classes were what made
+   this read as three unrelated blocks. */
+.tail{max-width:62ch;margin-top:clamp(18px,3vh,26px)}
+.tail p{
+  font-size:1.06rem;line-height:1.85;color:var(--ink-soft);
+  margin:0 0 14px;
+}
+.tail p:last-child{margin-bottom:0}
+
+.back-ico{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  border:1px solid rgba(63,125,120,.32);background:rgba(63,125,120,.07);
+  display:grid;place-items:center;line-height:1;
+  font-size:1.05rem;color:var(--teal);
+}
+
+/* Sits just above the mantra and points at the footer, so it keeps
+   the mantra company instead of floating on its own. */
+.tail-note{
+  font-size:1.06rem;line-height:1.85;color:var(--ink-soft);
+  max-width:62ch;margin:20px 0 0;
+}
+
+/* style.css spaces the mantra for a long chapter page. Here it is the
+   last line before the links it refers to, so it moves in close. */
+.mantra{margin:26px 0 4px}
+.page{padding-bottom:6px}
+footer{margin-top:18px}
+
+@media (prefers-reduced-motion:reduce){
+  .lost-fig{animation:none;opacity:.62;transform:none;filter:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="topbar-inner">
+  <a class="brand" href="/">
+    <div class="monogram"><img src="/media/profile.jpg" alt="Mahbub Ul Alam"></div>
+    <div><span class="brand-name">Mahbub Ul Alam</span><span class="brand-sub">Built from pieces · Adrift by choice · Machines to dream</span></div>
+  </a>
+  <a class="to-contents" href="/">Contents</a>
+</div></div>
+
+<main class="wrap">
+  <section class="page active">
+
+    <div class="lost">
+      <div class="lost-head">
+        <span class="lost-num">404</span>
+        <span class="lost-cap">Page not found</span>
+      </div>
+      <div class="lost-stage">
+        <div class="lost-fig boy" role="img" aria-label="A boy running through monsoon rain"></div>
+
+        <!-- ========================================================
+             PLACEHOLDER POEMS. Both are yours to replace. English on
+             top, Bengali beneath, three or four lines each: the <br>
+             at the end of every line is what holds the shape, so keep
+             them. The Bengali is deliberately upright, never italic.
+             ======================================================== -->
+        <div class="poembox">
+          <div class="poem-cols">
+          <p class="poem-en">
+        My life is cold, and dark, and dreary;<br>
+        It rains, and the wind is never weary;<br>
+        My thoughts still cling to the mouldering Past,<br>
+        But the hopes of youth fall thick in the blast,
+          </p>
+          <div class="poem-div"></div>
+          <p class="poem-bn">
+            বৃষ্টি নামলো যখন আমি উঠোন-পানে একা<br>
+            দৌড়ে গিয়ে ভেবেছিলাম তোমার পাবো দেখা<br>
+            হয়তো মেঘে-বৃষ্টিতে বা শিউলিগাছের তলে<br>
+            আজানুকেশ ভিজিয়ে নিচ্ছো আকাশ-ছেঁচা জলে<br>
+            কিন্তু তুমি নেই বাহিরে—অন্তরে মেঘ করে<br>
+            ভারি ব্যাপক বৃষ্টি আমার বুকের মধ্যে ঝরে!
+          </p>
+          </div>
+        </div>
+
+        <div class="lost-fig girl" role="img" aria-label="A girl running through monsoon rain"></div>
+        <div class="waterline"></div>
+      </div>
+    </div>
+
+    <h1 class="display">It was a rainy night.<br>It was the <b>myth</b> of a rainy night.</h1>
+
+    <div class="quote-bn">
+<p>
+আমরা দু-জনে মিলে শূন্য ক’রে চ’লে যাবো জীবনের প্রচুর ভাঁড়ার।
+</p>
+</div>
+
+    <div class="tail">
+      <p>The address you followed is not here. Either a letter went missing on the way, or the page did once exist and I have quietly moved it since.</p>
+      <p>I am Mahbub Ul Alam, and আনন্দ (Anondo) when I am writing. I build data and AI infrastructure for life-science research, and I write in Bengali here when the working day lets go of me.</p>
+    </div>
+
+    <a class="doc-card" href="/">
+      <span class="back-ico">↩</span>
+      <span>
+        <span class="dt">Back to the beginning</span>
+        <span class="dm">mahbub.se · chapter one</span>
+      </span>
+    </a>
+
+    <p class="tail-note">Above, the way home. Below, every place I have left a light on.</p>
+
+    <div class="mantra">Mr. Raindrop, falling away from me now</div>
+
+  </section>
+
+  <footer>
+    <div class="links">
+      <a href="https://github.com/anondo1969" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/anondo" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://scholar.google.com/citations?user=lIfPGYcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="https://ongshi.com" target="_blank" rel="noopener">ongshi.com</a>
+    </div>
+
+    <div class="colophon">
+      <p class="cq-bn">জলরং আর তুলির আঁচড়ে ফোটানো শৈশবের স্বপন কি যন্ত্ররাও দ্যাখে? কেমন সে স্বপন?</p>
+      <p class="cq-en">Do machines, too, dream childhoods into bloom, in watercolor and brushstroke? And what kind of dream must that be?</p>
+    </div>
+
+    <div class="cr">© 2026 Mahbub Ul Alam · <a href="https://mahbub.se" target="_blank" rel="noopener">mahbub.se</a> ·</div>
+  </footer>
+</main>
+
+</body>
+</html>
