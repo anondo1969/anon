@@ -36,10 +36,13 @@
    the five values in the keyframes must move with it, and they
    must rise monotonically or the art will grow and then shrink
    mid-flight. Band heights are unitless numbers so the same
-   value can be spent as vh and then again as dvh: the second
+   value can be spent as vh and then again as lvh: the second
    declaration is simply dropped by any browser too old to
-   parse it, and the phone's collapsing URL bar stops mattering
-   on every browser that is not.
+   parse it.
+   Use lvh, never dvh. dvh is the DYNAMIC viewport height and it
+   updates the whole time the mobile address bar is collapsing,
+   so a fixed element sized in dvh visibly resizes while you
+   scroll. lvh is the largest viewport height and never moves.
    ============================================================ */
 
 
@@ -50,7 +53,7 @@
   --art-rest:.12;           /* opacity it settles at, and stays */
   --art-band-top:34;        /* girl's height along the top, in vh */
   --art-band-bottom:30;     /* boy's height along the bottom, in vh */
-  --art-top-gap:64px;      /* clearance for the topbar, which sits
+  --art-top-gap:104px;      /* clearance for the topbar, which sits
                                over the art: without it her head is
                                clipped by the header. Measure your
                                topbar and add ~15px of air. */
@@ -61,7 +64,11 @@
   --art-scale-from:.5;      /* half size at the first frame */
   --art-blur-from:8px;      /* fog at the first frame */
   --art-scale-end:1.015;    /* a whisper of drift as it recedes */
-  --art-blur-end:.6px;      /* and a whisper of softness */
+  --art-blur-end:0;         /* no blur once it has settled. A blurred,
+                               masked, fixed layer has to be re-
+                               rasterised during momentum scroll, which
+                               is what makes it shimmer on a phone. The
+                               gutters put it back, below. */
 }
 
 /* ---- tunables : bands (portrait tablets) ---- */
@@ -82,6 +89,7 @@
     --art-dur:10s;
     --art-peak:.92;
     --art-rest:.55;
+    --art-blur-end:.6px;
     --gutter-art-w:min(29vw,480px);
   }
 }
@@ -138,17 +146,17 @@ html::after{
     top:var(--art-top-gap);
     right:0;
     height:calc(var(--art-band-top) * 1vh);
-    height:calc(var(--art-band-top) * 1dvh);
+    height:calc(var(--art-band-top) * 1lvh);
     width:calc(var(--art-band-top) * 1vh * var(--art-ar-girl));
-    width:calc(var(--art-band-top) * 1dvh * var(--art-ar-girl));
+    width:calc(var(--art-band-top) * 1lvh * var(--art-ar-girl));
     background-image:url("girl-sm.webp");
     transform-origin:50% 100%;
     -webkit-mask-image:
-      linear-gradient(transparent,#000 18% 76%,transparent),
+      linear-gradient(to bottom,#000 78%,transparent),
       linear-gradient(to left,#000 58%,transparent);
     -webkit-mask-composite:source-in;
     mask-image:
-      linear-gradient(transparent,#000 18% 76%,transparent),
+      linear-gradient(to bottom,#000 78%,transparent),
       linear-gradient(to left,#000 58%,transparent);
     mask-composite:intersect;
   }
@@ -158,9 +166,9 @@ html::after{
     bottom:0;
     left:0;
     height:calc(var(--art-band-bottom) * 1vh);
-    height:calc(var(--art-band-bottom) * 1dvh);
+    height:calc(var(--art-band-bottom) * 1lvh);
     width:calc(var(--art-band-bottom) * 1vh * var(--art-ar-boy));
-    width:calc(var(--art-band-bottom) * 1dvh * var(--art-ar-boy));
+    width:calc(var(--art-band-bottom) * 1lvh * var(--art-ar-boy));
     background-image:url("boy-sm.webp");
     transform-origin:50% 100%;
     -webkit-mask-image:
