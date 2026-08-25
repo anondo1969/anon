@@ -50,7 +50,7 @@
   --art-rest:.12;           /* opacity it settles at, and stays */
   --art-band-top:34;        /* girl's height along the top, in vh */
   --art-band-bottom:30;     /* boy's height along the bottom, in vh */
-  --art-top-gap:25px;      /* clearance for the topbar, which sits
+  --art-top-gap:30px;      /* clearance for the topbar, which sits
                                over the art: without it her head is
                                clipped by the header. Measure your
                                topbar and add ~15px of air. */
