@@ -1,7 +1,7 @@
 ---
 title: PAUSE Before You Prompt
 date: 2026-07-16
-lang: bn
+lang: en
 type: Essay
 excerpt: A private 10-minute self-check tool for using AI as a scaffold instead of a substitute.
 ---
