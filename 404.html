@@ -13,42 +13,80 @@
      GitHub Pages serves this one file for any missing address, but
      the browser keeps showing the address that failed. If someone
      mistypes /writing/some/deep/path, a relative href like
-     "assets/style.css" would be looked for at /writing/some/assets/
+     "assets/borsha.css" would be looked for at /writing/some/assets/
      and would fail too, leaving an unstyled page. Root-absolute
      paths always resolve. Do not change them to relative ones.
+
+     The paper images are the one exception, and they are safe: they
+     are named inside borsha.css, and url() in a stylesheet resolves
+     against the stylesheet rather than the page. So this file gets
+     the same three sheets as every other page, at any depth.
      ============================================================ -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Spline+Sans+Mono:wght@400;500&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/borsha.css">
 <link rel="icon" type="image/png" href="/media/icon.png">
 <link rel="apple-touch-icon" href="/media/icon.png">
 
 <style>
-/* ------------------------------------------------------------
-   404-only styling. Everything else comes from style.css.
-   art.css is deliberately NOT loaded here: the two children are
-   the subject of this page rather than its margins, and having
-   them in the gutters as well would put four of them on screen.
-   ------------------------------------------------------------ */
+/* ============================================================
+   404-only styling. borsha.css is NOT modified for this page:
+   anything it does not already provide is defined right here.
+
+   art.css is deliberately not loaded. The two children are the
+   subject of this page rather than its margins, and having them
+   in the gutters as well would put four of them on screen.
+   ============================================================ */
+
+/* ---- local names --------------------------------------------
+   borsha.css writes its faces out in full rather than exposing
+   tokens, so these three repeat its exact stacks. This is the only
+   place in the site where the fonts are written down twice: if you
+   change them in borsha.css, change them here too. --monsoon and
+   --brush came from the old style.css and have no equivalent in
+   borsha.css, so they live here now.                             */
+:root{
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --bn:"Noto Serif Bengali",Georgia,serif;
+  --monsoon:#5b7a85;
+  --brush:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='6'%3E%3Cpath d='M2 3.6C20 1.7 36 4.4 54 3.1C72 1.8 90 4.6 118 2.4' fill='none' stroke='%236f6552' stroke-width='1.1' stroke-linecap='round' opacity='.5'/%3E%3C/svg%3E");
+}
+
+/* ---- 404-only ------------------------------------------------
+   .brand, .cq-bn, .cq-en, .quote-bn and .doc-card all turned out to
+   be used by the chapters or the shell, so they moved into
+   borsha.css. What is left here is used by nothing else.        */
+/* .quote-bn and .doc-card moved into borsha.css: about.html uses the
+   first and both pages use the second. Only the icon stays local. */
+.back-ico{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  border:1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  display:grid;place-items:center;line-height:1;
+  font-size:1.05rem;color:var(--accent);
+}
 
 /* the topbar's right-hand side, standing in for the burger */
 .to-contents{
+  margin-left:auto;
   font-family:var(--mono);font-size:.6rem;letter-spacing:.24em;
-  text-transform:uppercase;color:var(--teal);text-decoration:none;
-  border-bottom:1px solid rgba(63,125,120,.3);padding-bottom:3px;
+  text-transform:uppercase;color:var(--accent);text-decoration:none;
+  border-bottom:1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding-bottom:3px;
 }
 .to-contents:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
-/* the stage: 404 at the top, then the two children standing far
-   apart in the same water with nothing between them */
+/* ---- the stage ----------------------------------------------
+   404 at the top, then the two children standing far apart in the
+   same water with nothing between them.                          */
 .lost{margin:clamp(26px,6vh,58px) 0 4px}
 
 .lost-head{text-align:center;margin-bottom:clamp(14px,3vh,30px)}
 .lost-num{
-  display:block;font-family:var(--serif);font-weight:300;
-  font-size:clamp(3.2rem,13vw,7.6rem);line-height:1;letter-spacing:.08em;
+  display:block;font-family:var(--serif);font-weight:300;font-style:italic;
+  font-size:clamp(3.2rem,13vw,7.6rem);line-height:1;letter-spacing:.06em;
   color:var(--ink);opacity:.88;
 }
 .lost-cap{
@@ -58,16 +96,15 @@
   margin-top:clamp(10px,1.8vh,20px);
 }
 
-/* The stage is a grid so the same three pieces can sit side by side
-   on a wide screen and restack on a narrow one, without touching the
-   markup. Named areas make the two arrangements readable:
-     wide     boy | poem | girl        with the waterline under all three
-     narrow   boy | girl               waterline, then the poem beneath */
+/* A grid, so the same three pieces sit side by side on a wide screen
+   and restack on a narrow one without touching the markup:
+     wide     boy | poem | girl        waterline under all three
+     narrow   boy | girl               waterline, then the poem       */
 .lost-stage{
   display:grid;
-  /* start, not end: the poem box is taller than the children, and
-     bottom-aligning them dropped both of them halfway down the page.
-     Their tops now line up with the box, and the box stretches to
+  /* start, not end: the verse is taller than the children, and
+     bottom-aligning them dropped both halfway down the page. Their
+     tops now line up with the verse, and the verse stretches to
      their height, so all three share a top and a bottom edge. */
   align-items:start;
   column-gap:clamp(14px,2.4vw,38px);
@@ -82,9 +119,10 @@
 .waterline{grid-area:line}
 
 /* On a wide screen the stage steps outside the reading column, so the
-   two children move out toward the margins and the poem gets room to
-   breathe between them. 48px of slack keeps a desktop scrollbar from
-   pushing anything sideways. */
+   children move out toward the margins and the verse gets room to
+   breathe. borsha.css centres .wrap in the viewport, so left:50% here
+   lands on the viewport centre. 48px of slack keeps a desktop
+   scrollbar from pushing anything sideways. */
 @media (min-width:720px){
   .lost{
     width:min(1240px,calc(100vw - 48px));
@@ -103,6 +141,7 @@
   }
   .poembox{margin-top:26px}
 }
+
 .lost-fig{
   width:clamp(84px,11.5vw,176px);
   aspect-ratio:.565;
@@ -110,17 +149,14 @@
   background-position:center bottom;
   background-size:contain;
   opacity:.62;
-  /* Feather all four edges. The artwork carries its own cream
-     background, so without a horizontal fade as well as a vertical
-     one each child arrives inside a visible rectangle. */
-  -webkit-mask-image:
-    linear-gradient(transparent,#000 15% 88%,transparent),
-    linear-gradient(to right,transparent,#000 30%,#000 70%,transparent);
-  -webkit-mask-composite:source-in;
-  mask-image:
-    linear-gradient(transparent,#000 15% 88%,transparent),
-    linear-gradient(to right,transparent,#000 30%,#000 70%,transparent);
-  mask-composite:intersect;
+  /* The horizontal half of the old mask is gone. It was hiding the
+     cream ground the artwork is painted on, and that is no longer its
+     job: borsha.css multiplies .wrap as a group, so white ground
+     multiplied by paper IS the paper. What is left is a vertical
+     feather, kept because it looks right rather than because it is
+     load bearing. */
+  -webkit-mask-image:linear-gradient(transparent,#000 15% 88%,transparent);
+  mask-image:linear-gradient(transparent,#000 15% 88%,transparent);
   animation:lost-rise 2.4s cubic-bezier(.22,.61,.36,1) both;
 }
 .lost-fig.boy{background-image:url("/assets/boy-sm.webp")}
@@ -131,14 +167,12 @@
   to  {opacity:.62;transform:none;filter:blur(0) saturate(1)}
 }
 
-/* the poem box: no fill, just a ruled frame over the paper.
-   It stretches to the children's height and centres its verse, so
-   the three pieces of the stage line up top and bottom. */
+/* The verse. It had a rounded four-sided frame; the rest of the site
+   has given its boxes up, so this one separates with air like
+   everything else. The waterline underneath already anchors it. */
 .poembox{
-  background:transparent;
-  border:1px solid var(--rule);
-  border-radius:8px;
-  padding:clamp(20px,2.4vw,32px) clamp(16px,2.4vw,30px);
+  background:transparent;border:0;border-radius:0;
+  padding:clamp(16px,2vw,26px) clamp(10px,2vw,26px);
   margin:0;
   text-align:center;
   align-self:stretch;
@@ -155,13 +189,15 @@
   font-size:clamp(.9rem,1.1vw,.98rem);line-height:2.2;
   color:var(--ink);max-width:42ch;margin:0 auto;
 }
+/* the one ornament on the page, and it earns its place: it separates
+   two languages rather than decorating one */
 .poem-div{
   height:6px;width:min(64%,260px);margin:clamp(18px,2.4vh,26px) auto;
   background:var(--brush) repeat-x center;background-size:120px 6px;opacity:.65;
 }
 
 /* Two columns of verse instead of one tall stack. Only where there is
-   genuinely room: below this the box is too narrow and every line
+   genuinely room: below this the space is too narrow and every line
    would wrap, so the poems go back to one above the other. */
 @media (min-width:1180px){
   .poem-cols{
@@ -180,11 +216,14 @@
 /* the waterline they are all standing on, and its reflection */
 .waterline{
   height:1px;
-  background:linear-gradient(to right,transparent,rgba(91,122,133,.34) 24%,rgba(91,122,133,.34) 76%,transparent);
+  background:linear-gradient(to right,transparent,
+    color-mix(in srgb, var(--monsoon) 34%, transparent) 24%,
+    color-mix(in srgb, var(--monsoon) 34%, transparent) 76%,transparent);
 }
 .waterline::after{
   content:"";display:block;height:46px;
-  background:linear-gradient(to bottom,rgba(91,122,133,.09),transparent);
+  background:linear-gradient(to bottom,
+    color-mix(in srgb, var(--monsoon) 9%, transparent),transparent);
   -webkit-mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);
   mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);
 }
@@ -193,18 +232,8 @@
    <br> lines and the two different paragraph classes were what made
    this read as three unrelated blocks. */
 .tail{max-width:62ch;margin-top:clamp(18px,3vh,26px)}
-.tail p{
-  font-size:1.06rem;line-height:1.85;color:var(--ink-soft);
-  margin:0 0 14px;
-}
+.tail p{font-size:1.06rem;line-height:1.85;color:var(--ink-soft);margin:0 0 14px}
 .tail p:last-child{margin-bottom:0}
-
-.back-ico{
-  width:38px;height:38px;border-radius:50%;flex-shrink:0;
-  border:1px solid rgba(63,125,120,.32);background:rgba(63,125,120,.07);
-  display:grid;place-items:center;line-height:1;
-  font-size:1.05rem;color:var(--teal);
-}
 
 /* Sits just above the mantra and points at the footer, so it keeps
    the mantra company instead of floating on its own. */
@@ -213,7 +242,7 @@
   max-width:62ch;margin:20px 0 0;
 }
 
-/* style.css spaces the mantra for a long chapter page. Here it is the
+/* borsha.css spaces the mantra for a long chapter page. Here it is the
    last line before the links it refers to, so it moves in close. */
 .mantra{margin:26px 0 4px}
 .page{padding-bottom:6px}
@@ -225,6 +254,12 @@ footer{margin-top:18px}
 </style>
 </head>
 <body>
+
+<!-- The sheet, and the sheet again masked to the two ends. The same
+     two elements every other page uses, so this gets the identical
+     background: mobile, tablet or desktop chosen by window shape. -->
+<div class="paper" aria-hidden="true"></div>
+<div class="paper-veil" aria-hidden="true"></div>
 
 <div class="topbar"><div class="topbar-inner">
   <a class="brand" href="/">
@@ -262,9 +297,9 @@ footer{margin-top:18px}
           <div class="poem-div"></div>
           <p class="poem-bn">
             বৃষ্টি নামলো যখন আমি উঠোন-পানে একা<br>
-            দৌড়ে গিয়ে ভেবেছিলাম তোমার পাবো দেখা<br>
-            হয়তো মেঘে-বৃষ্টিতে বা শিউলিগাছের তলে<br>
-            আজানুকেশ ভিজিয়ে নিচ্ছো আকাশ-ছেঁচা জলে<br>
+            দৌড়ে গিয়ে ভেবেছিলাম তোমার পাবো দেখা<br>
+            হয়তো মেঘে-বৃষ্টিতে বা শিউলিগাছের তলে<br>
+            আজানুকেশ ভিজিয়ে নিচ্ছো আকাশ-ছেঁচা জলে<br>
             কিন্তু তুমি নেই বাহিরে—অন্তরে মেঘ করে<br>
             ভারি ব্যাপক বৃষ্টি আমার বুকের মধ্যে ঝরে!
           </p>
@@ -276,13 +311,12 @@ footer{margin-top:18px}
       </div>
     </div>
 
-    <h1 class="display">It was a rainy night.<br>It was the <b>myth</b> of a rainy night.</h1>
+    <!-- borsha.css tints <em> inside .display, not <b> -->
+    <h1 class="display">It was a rainy night.<br>It was the <em>myth</em> of a rainy night.</h1>
 
     <div class="quote-bn">
-<p>
-আমরা দু-জনে মিলে শূন্য ক’রে চ’লে যাবো জীবনের প্রচুর ভাঁড়ার।
-</p>
-</div>
+      <p>আমরা দু-জনে মিলে শূন্য ক’রে চ’লে যাবো জীবনের প্রচুর ভাঁড়ার।</p>
+    </div>
 
     <div class="tail">
       <p>The address you followed is not here. Either a letter went missing on the way, or the page did once exist and I have quietly moved it since.</p>

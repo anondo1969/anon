@@ -1,0 +1,651 @@
+/* ============================================================
+   mahbub.se : borsha.css
+   বর্ষা — one stylesheet, one sheet of paper.
+
+   WHAT THIS REPLACES
+   style.css, paper.css, paper-v2.css, paper-v3.css. All of them.
+   Delete those four. Nothing here is layered on top of anything;
+   this file owns the page by itself, which is why there is no
+   overlap left to go stale.
+
+   LOAD ORDER  (art.css must come before art.js: art.js reads
+   --art-dur out of the computed style)
+
+     <link rel="stylesheet" href="assets/borsha.css">
+     <link rel="stylesheet" href="assets/art.css">
+     <script src="assets/art.js"></script>
+     <script src="assets/app.js" defer></script>
+
+   THE STACK, bottom to top. Nothing else may claim a z-index.
+     0   .paper        the sheet
+     1   art.css       the two children (html::before / ::after)
+     2   text          topbar text, chapter, footer
+     3   .paper-veil   the same sheet again, masked to the two ends
+     4   .topbar       so the brand stays above the veil
+     5   .scrim        dims the page when the drawer opens
+     6   #panel        the Contents drawer
+
+   Every number worth touching is a custom property below, and
+   README-css.md explains each one in plain language.
+   ============================================================ */
+
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+:root{
+  /* -- the sheet. One image per shape, not per device. -------- */
+  --sheet:url("../assets/paper-mobile.webp");
+  --paper-hi:#f9ecd4;          /* shows while the image loads */
+  --surround:#faf8f4;          /* the near-white the sheet floats on */
+
+  /* -- ink ---------------------------------------------------- */
+  --ink:#23303a;               /* iron-gall blue-black */
+  --ink-soft:#7a705c;
+  --accent:#26605a;
+  --accent-warm:#9c4a24;
+  --rule:rgba(70,56,38,.18);
+
+  /* -- layout. Width-based, because a line of text cares about
+        width, not about what kind of device it is on. --------- */
+  --frame:7vw;                 /* clearance from the torn edge */
+  --measure:33rem;             /* the prose column */
+  --key:0rem;                  /* hanging key column, 0 = stacked */
+  --keygap:0rem;
+
+  /* -- the veil ----------------------------------------------- */
+  --cap:6.4rem;                /* opaque paper at the top; must
+                                  exceed the topbar's height */
+  --fade:6vh;                  /* the dissolve, same at both ends */
+
+  /* -- contract with art.css ---------------------------------- */
+  --art-top-gap:calc(var(--cap) + var(--fade) * .5);
+
+  /* -- motion -------------------------------------------------- */
+  --page-fade:.5s;
+}
+
+@media (min-width:700px){
+  :root{
+    --frame:5vw; --measure:37rem; --key:5.5rem; --keygap:1.4rem;
+    --cap:6rem;
+  }
+  body{font-size:17px}
+}
+@media (min-width:1100px){
+  :root{--frame:4.5vw; --measure:38rem; --key:9.5rem; --keygap:2rem}
+}
+
+/* The sheet is chosen by SHAPE. A 3:4 sheet on a 3:4 tablet keeps
+   the deckle scallops in proportion: no smearing, no cropped edge. */
+@media (min-aspect-ratio:5/8){  :root{--sheet:url("../assets/paper-tablet.webp")} }
+@media (min-aspect-ratio:11/10){:root{--sheet:url("../assets/paper-desktop.webp")} }
+
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+
+html{background:var(--surround)}
+
+body{
+  margin:0;
+  background:transparent;
+  color:var(--ink);
+  overflow-x:hidden;
+  font-family:"Fraunces",Georgia,"Times New Roman",serif;
+  font-optical-sizing:auto;
+  font-size:16px;
+  line-height:1.76;
+}
+
+img{max-width:100%;height:auto}
+
+a{color:var(--accent);text-underline-offset:2.5px}
+a:hover{color:var(--accent-warm)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+
+/* ============================================================
+   3. THE SHEET
+   Fixed, so one viewport-sized image covers a page of any length
+   and the torn edge never repeats mid-scroll. background-size is
+   100% 100%, not cover: texture has no geometry to distort, and
+   cover would crop the deckle off the sides.
+   ============================================================ */
+.paper,
+.paper-veil{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-color:var(--paper-hi);
+  background-image:var(--sheet);
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+}
+.paper{z-index:0}
+
+/* The same sheet again, above the text, masked so it exists only at
+   the very top and the very bottom. Identical geometry to .paper, so
+   the two line up by construction: no vh arithmetic to drift. Text
+   at either end passes behind paper rather than fading into a tint. */
+.paper-veil{z-index:3;display:none}
+
+@supports ((-webkit-mask-image:linear-gradient(#000,#000)) or (mask-image:linear-gradient(#000,#000))){
+  .paper-veil{
+    display:block;
+    -webkit-mask-image:linear-gradient(to bottom,
+      #000 0, #000 var(--cap),
+      transparent calc(var(--cap) + var(--fade)),
+      transparent calc(100% - var(--fade)),
+      #000 100%);
+    mask-image:linear-gradient(to bottom,
+      #000 0, #000 var(--cap),
+      transparent calc(var(--cap) + var(--fade)),
+      transparent calc(100% - var(--fade)),
+      #000 100%);
+  }
+  /* only here: with the veil supplying the paper, the bar's own text
+     can multiply into it like everything else. In the fallback path
+     below the bar keeps a gradient, and multiplying that would darken
+     the panel instead of the ink. */
+  .topbar{background:none;mix-blend-mode:multiply}
+}
+
+
+/* ============================================================
+   4. INK
+   multiply, so glyphs take the tone of the fibre under them and
+   darken where the paper darkens, the way real ink does. It also
+   raises contrast over the watercolour blooms instead of lowering
+   it, which is why no cream wash is needed anywhere on this page.
+   Set .no-absorb on <body> to print the ink flat instead.
+   ============================================================ */
+.wrap,
+footer{position:relative;z-index:2;mix-blend-mode:multiply}
+
+body.no-absorb .wrap,
+body.no-absorb footer{
+  mix-blend-mode:normal;
+  text-shadow:0 0 12px rgba(249,236,212,.45);
+}
+@supports not (mix-blend-mode:multiply){
+  .wrap,footer{text-shadow:0 0 12px rgba(249,236,212,.45)}
+}
+
+
+/* ============================================================
+   5. TOP BAR
+   No panel, no blur, no border. The veil supplies an opaque slice
+   of the real sheet behind it. The gradient here is only the
+   fallback for browsers without mask-image, and is switched off in
+   the @supports block above.
+   ============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:4;
+  background:linear-gradient(to bottom,
+    rgba(250,242,224,.97) 0%, rgba(250,242,224,.97) 72%, rgba(250,242,224,0) 100%);
+}
+.topbar-inner{
+  width:min(100% - 2 * var(--frame), calc(var(--measure) + var(--key) + var(--keygap)));
+  margin-inline:auto;
+  display:flex;align-items:center;gap:.8rem;
+  padding:.85rem 0 1.5rem;
+}
+.monogram{
+  width:38px;height:38px;flex:0 0 38px;border-radius:50%;
+  overflow:hidden;border:0;box-shadow:none;
+  -webkit-mask-image:radial-gradient(circle,#000 60%,transparent 78%);
+          mask-image:radial-gradient(circle,#000 60%,transparent 78%);
+}
+.monogram img{width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block;filter:saturate(.65) brightness(1.02)}
+
+.brand-name{display:block;font-size:1.04rem;font-weight:500;letter-spacing:-.004em;line-height:1.2}
+.brand-sub{
+  display:block;font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.66rem;line-height:1.5;color:var(--ink-soft);margin-top:.16rem;
+}
+
+.burger,
+#burger{
+  margin-left:auto;background:none;border:0;padding:.4rem;cursor:pointer;
+  display:grid;gap:6px;
+}
+.burger span,
+#burger span{
+  display:block;width:21px;height:1.2px;background:var(--ink);opacity:.7;
+  transition:transform .28s ease, opacity .2s ease;
+}
+.burger.open span:nth-child(1),
+#burger.open span:nth-child(1){transform:translateY(7.2px) rotate(45deg)}
+.burger.open span:nth-child(2),
+#burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3),
+#burger.open span:nth-child(3){transform:translateY(-7.2px) rotate(-45deg)}
+
+
+/* ============================================================
+   6. CONTENTS DRAWER
+   The panel is another window onto the same sheet, so the drawer
+   reads as a fold of the page rather than a card laid over it.
+   ============================================================ */
+.scrim,
+#scrim{
+  position:fixed;inset:0;z-index:5;
+  background:rgba(40,32,20,.34);
+  opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s;
+}
+.scrim.open,
+#scrim.open{opacity:1;visibility:visible}
+
+.panel,
+#panel{
+  position:fixed;top:0;right:0;bottom:0;z-index:6;
+  width:min(20rem,84vw);
+  padding:calc(var(--cap) - 1rem) 1.8rem 2rem;
+  overflow-y:auto;
+  background-color:var(--paper-hi);
+  background-image:var(--sheet);
+  background-repeat:no-repeat;
+  background-size:100vw 100vh;
+  background-position:100% 0;
+  box-shadow:-18px 0 40px rgba(60,45,25,.20);
+  transform:translateX(100%);
+  transition:transform .34s cubic-bezier(.22,.61,.36,1);
+}
+.panel.open,
+#panel.open{transform:none}
+
+.panel-label{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.66rem;letter-spacing:.14em;color:var(--ink-soft);
+  margin:0 0 1.1rem;
+}
+#navLinks{display:grid}
+.nav-link{
+  display:flex;gap:.75rem;align-items:baseline;
+  padding:.5rem 0;text-decoration:none;color:var(--ink);
+  font-size:1.02rem;
+}
+.nav-num{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.68rem;color:var(--ink-soft);
+}
+.nav-link:hover{color:var(--accent)}
+.nav-link.active{color:var(--accent)}
+.nav-link.active .nav-num{color:var(--accent)}
+
+
+/* ============================================================
+   7. THE PAGE
+   The frame sits OUTSIDE the measure, so the column stops shrinking
+   as the viewport grows.
+   ============================================================ */
+.wrap{
+  width:min(100% - 2 * var(--frame), var(--measure));
+  margin-inline:auto;
+  padding:1.4rem 0 13vh;
+}
+@media (min-width:700px){ .wrap{padding-top:2rem} }
+
+/* app.js writes this strip above every chapter */
+.chapter-head{margin:0 0 1.6rem}
+.chapter-num{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.68rem;color:var(--ink-soft);
+}
+.chapter-rule{display:none}      /* the page keeps exactly one rule; see §9 */
+
+#chapter-host{animation:borsha-page var(--page-fade) ease both}
+@keyframes borsha-page{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+
+/* ============================================================
+   8. PROSE
+   ============================================================ */
+.display{
+  font-size:clamp(2.1rem,7vw,3.3rem);
+  font-weight:400;font-style:italic;
+  line-height:1.13;letter-spacing:-.02em;
+  margin:0 0 2rem;
+  font-variation-settings:"opsz" 144;
+  text-wrap:balance;
+}
+.display em,
+.display b{font-style:italic;font-weight:700;color:var(--accent)}
+
+.lead{font-style:italic;font-size:1.12rem;line-height:1.68;margin:0 0 3.2rem;max-width:31rem}
+
+p{margin:0 0 1.4rem}
+h2{font-size:1.5rem;font-weight:600;font-style:italic;margin:2.8rem 0 1rem;line-height:1.2}
+h3{font-size:1.14rem;font-weight:600;margin:2rem 0 .6rem}
+ul,ol{margin:0 0 1.4rem;padding-left:1.15rem}
+li{margin-bottom:.45rem}
+li::marker{color:var(--accent)}
+
+/* Entries: no boxes, no fills, no shadows. The key hangs in the left
+   margin on wide screens and stacks above on narrow, so the extra
+   width goes to structure instead of to longer lines. */
+.entries{display:grid;gap:1.6rem 0;margin:0}
+.entries dt{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.72rem;letter-spacing:.05em;color:var(--accent);margin-bottom:.22rem;
+}
+.entries dd{margin:0}
+.entries dd .t{display:block;font-weight:600;margin-bottom:.1rem}
+.entries + .entries{margin-top:3rem}
+
+@media (min-width:700px){
+  .entries{
+    grid-template-columns:var(--key) 1fr;
+    gap:1.8rem var(--keygap);
+    align-items:baseline;
+    margin-left:calc(-1 * (var(--key) + var(--keygap)));
+    width:calc(100% + var(--key) + var(--keygap));
+  }
+  .entries dt{margin-bottom:0;text-align:right;padding-top:.32rem}
+}
+
+.quote{margin:3.4rem 0}
+.quote p{
+  margin:0;font-style:italic;font-size:1.14rem;line-height:1.62;
+  color:#38454d;padding-left:1.4rem;
+}
+
+.bn{font-family:"Noto Serif Bengali",serif;line-height:1.98}
+
+.mantra{margin:2.8rem 0 0;font-style:italic;color:var(--ink-soft)}
+
+
+/* ============================================================
+   9. THE ONE RULE
+   Kept because the colophon is a real change of register: the page
+   stops describing and starts asking. Everything else separates
+   with air.
+   ============================================================ */
+.colophon{margin-top:3.6rem;padding-top:1.7rem;border-top:1px solid var(--rule)}
+.colophon .en{margin:0;font-style:italic;color:var(--ink-soft);font-size:.96rem}
+
+
+/* ============================================================
+   10. POST LISTS
+   Rendered by app.js from posts/<key>/_index.json.
+   ============================================================ */
+.post-row{
+  display:block;text-decoration:none;color:inherit;
+  padding:1.3rem 0;border-bottom:1px solid var(--rule);
+}
+.post-row:first-child{padding-top:.4rem}
+.post-row:last-child{border-bottom:0}
+.post-row h3{margin:.1rem 0 .35rem;font-size:1.1rem;font-weight:600}
+.post-row:hover h3{color:var(--accent)}
+.post-row p{margin:0;font-size:.96rem;color:#414a50}
+.pdate{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.66rem;letter-spacing:.04em;color:var(--ink-soft);
+}
+.post-row.bn h3,
+.post-row.bn p{font-family:"Noto Serif Bengali",serif;line-height:1.9}
+
+.post-row.music{cursor:default}
+.post-row.music h3 a{text-decoration:none;color:inherit}
+.post-row.music h3 a:hover{color:var(--accent)}
+.row-audio{margin:.8rem 0 .5rem}
+.row-audio audio{width:100%;max-width:26rem;height:34px}
+.row-more{
+  font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.68rem;color:var(--accent);text-decoration:none;
+}
+.row-more:hover{text-decoration:underline}
+
+
+/* ============================================================
+   11. STATES
+   ============================================================ */
+.loading,
+.empty-note{font-style:italic;color:var(--ink-soft)}
+
+
+/* ============================================================
+   12. FOOT
+   ============================================================ */
+footer{margin-top:3rem;border-top:0;padding-top:0}
+footer .links{display:flex;flex-wrap:wrap;gap:1.2rem;margin-bottom:.55rem}
+footer a{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.7rem}
+footer .cr{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.63rem;color:var(--ink-soft)}
+
+
+/* ============================================================
+   13. PAGE FURNITURE
+   Used by index.html, post.html and 404.html. These live here
+   rather than in any one page because all three share them: a
+   copy per page is exactly the duplication this file replaced.
+   ============================================================ */
+
+/* the whole left side of the top bar is one link */
+.brand{display:flex;align-items:center;gap:.8rem;text-decoration:none;color:inherit}
+.brand:hover .brand-name{color:var(--accent)}
+
+.page{position:relative}
+
+/* the drawer's sign-off */
+.panel-foot{
+  margin-top:2.2rem;padding-top:1.3rem;border-top:1px solid var(--rule);
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66rem;line-height:2.1;color:var(--ink-soft);
+}
+.panel-foot a{color:var(--accent);text-decoration:none}
+.panel-foot a:hover{text-decoration:underline}
+
+/* the colophon, as the footers actually mark it up */
+.cq-bn{font-family:"Noto Serif Bengali",serif;line-height:1.98;margin:0 0 .7rem}
+.cq-en{margin:0;font-style:italic;color:var(--ink-soft);font-size:.96rem}
+
+/* ---- post.html ---- */
+.back{
+  display:inline-block;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.68rem;
+  letter-spacing:.04em;color:var(--accent);text-decoration:none;margin-bottom:1.8rem;
+}
+.back:hover{color:var(--accent-warm)}
+
+.post-meta{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.04em;
+  color:var(--ink-soft);margin-bottom:1.1rem;
+}
+
+/* marked.js output. Bare h2/h3/p/ul/li are already set above, so
+   only the things markdown adds that a chapter never uses need
+   rules here. */
+.post-body h1{
+  font-size:clamp(1.9rem,5.6vw,2.7rem);font-weight:400;font-style:italic;
+  line-height:1.16;letter-spacing:-.018em;margin:0 0 1.6rem;
+  font-variation-settings:"opsz" 144;text-wrap:balance;
+}
+.post-body blockquote{
+  margin:2.4rem 0;padding-left:1.4rem;
+  font-style:italic;color:#38454d;
+}
+.post-body blockquote p{margin:0 0 .8rem}
+.post-body ol{padding-left:1.2rem}
+.post-body figure{margin:2.4rem 0}
+.post-body img{display:block;max-width:100%;height:auto;margin:2.4rem auto}
+.post-body audio{width:100%;max-width:26rem;margin:1.4rem 0}
+.post-body pre{
+  overflow-x:auto;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;line-height:1.7;
+  padding:1rem 0;margin:1.8rem 0;border-block:1px solid var(--rule);
+}
+.post-body code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.88em}
+.post-body hr{border:0;border-top:1px solid var(--rule);margin:2.6rem 0}
+.post-body.bn,
+.post-body.bn h1,
+.post-body.bn h2,
+.post-body.bn h3{font-family:"Noto Serif Bengali",serif}
+.post-body.bn{line-height:2.05}
+.post-body.bn h1{font-style:normal;line-height:1.5}
+
+
+/* ============================================================
+   14. CHAPTER COMPONENTS
+   Everything chapters/*.html marks up. The class names are
+   unchanged from style.css so no chapter file needs editing;
+   what changed is that the boxes are gone. A card was a tinted
+   rectangle with a coloured left bar. Here it is prose with a
+   coloured heading, and a hairline only where one item has to
+   be told from the next. The three variants survive as three
+   heading colours instead of three fills.
+   ============================================================ */
+
+/* section label above a group */
+.label{
+  display:block;font-family:"JetBrains Mono",ui-monospace,monospace;
+  font-size:.66rem;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--ink-soft);margin:3rem 0 1rem;
+}
+
+/* ---- cards, dissolved ---- */
+.card{
+  display:block;padding:1.5rem 0;margin:0;
+  text-decoration:none;color:inherit;
+}
+.card + .card{border-top:1px solid var(--rule)}
+.card h3{margin:0 0 .3rem;font-size:1.12rem;font-weight:600;color:var(--accent)}
+.card.clay h3{color:var(--accent-warm)}
+.card.sage h3{color:#4a6b78}
+.card p{margin:0;font-size:1rem;line-height:1.66}
+.card.link:hover h3{color:var(--ink)}
+
+/* the mono line under a heading: dates, venues, kinds */
+.meta{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.1em;
+  color:var(--ink-soft);margin:0 0 .5rem;
+}
+
+/* ---- the feature block ----
+   It was a dark slab. Air and a heavier measure do the same job
+   without introducing a second material to the page. */
+.feature{margin:2.4rem 0;padding:1.8rem 0;border-block:1px solid var(--rule)}
+.feature .label{margin-top:0}
+.feature h3{margin:0 0 .8rem;font-size:1.34rem;font-weight:400;font-style:italic;line-height:1.28}
+
+/* ---- link rows: chips and publication links ----
+   These were outlined pills. Now they are what they always were,
+   a row of links, separated by space rather than by borders. */
+.pub-links,
+.chips{display:flex;flex-wrap:wrap;gap:.35rem 1.15rem;margin:.7rem 0 0}
+.pub-links a,
+.chips a{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.04em;
+  color:var(--accent);text-decoration:none;
+}
+.pub-links a:hover,
+.chips a:hover{text-decoration:underline;text-underline-offset:3px}
+.pub-links a.award,
+.chips a.award{color:var(--accent-warm)}
+.chips{margin-top:1rem;gap:.4rem 1.3rem}
+
+/* ---- publications ---- */
+.pub{padding:1.3rem 0;border-bottom:1px solid var(--rule)}
+.pub:last-child{border-bottom:0}
+.pn{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66rem;color:var(--ink-soft);
+  margin-right:.6rem;vertical-align:super;
+}
+.ptitle{font-weight:600;font-size:1.04rem;line-height:1.45;color:var(--ink);text-decoration:none}
+.ptitle:hover{color:var(--accent)}
+.venue{margin-top:.3rem;font-size:.94rem;color:var(--ink-soft)}
+
+/* ---- timeline ----
+   Same hanging key as .entries, so the two read as one idea. */
+.tl{display:grid;gap:1.6rem 0;margin:1.2rem 0 0;padding:0;border:0}
+.tl-item{padding:0}
+.tl-yr{
+  display:block;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.05em;
+  color:var(--accent);margin-bottom:.22rem;
+}
+.tl-item h4{margin:0 0 .2rem;font-size:1.04rem;font-weight:600}
+.tl-item p{margin:0;font-size:.96rem;line-height:1.66}
+@media (min-width:700px){
+  .tl{
+    grid-template-columns:var(--key) 1fr;
+    gap:1.8rem var(--keygap);align-items:baseline;
+    margin-left:calc(-1 * (var(--key) + var(--keygap)));
+    width:calc(100% + var(--key) + var(--keygap));
+  }
+  .tl-item{display:contents}
+  .tl-yr{text-align:right;margin-bottom:0;padding-top:.32rem}
+  .tl-item h4{grid-column:2}
+  .tl-item p{grid-column:2;margin-top:-1.4rem;padding-top:1.6rem}
+}
+
+/* ---- Bengali pull quote ---- */
+.quote-bn{margin:2.8rem 0}
+.quote-bn p{
+  margin:0;font-family:"Noto Serif Bengali",serif;font-size:1.02rem;line-height:2.05;
+  color:#38454d;padding-left:1.4rem;
+}
+
+/* ---- a link standing in for a document or destination ---- */
+.doc-card{
+  display:flex;align-items:center;gap:.9rem;
+  text-decoration:none;color:inherit;margin:2.2rem 0;
+}
+.doc-card .dt{display:block;font-weight:600;font-size:1.04rem}
+.doc-card .dm{
+  display:block;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.66rem;
+  color:var(--ink-soft);margin-top:.15rem;
+}
+.doc-card:hover .dt{color:var(--accent)}
+
+/* ---- embeds ----
+   Media steps outside the measure. Prose stays at 72 characters;
+   a 16:9 video does not have to. */
+.embed{margin:2.4rem 0}
+.embed iframe{
+  width:100%;aspect-ratio:16/9;display:block;
+  border:1px solid var(--rule);background:rgba(255,255,255,.35);
+}
+.embed.pdf iframe{aspect-ratio:auto;height:min(78vh,620px)}
+.embed figure{margin:0}
+.embed img{display:block;width:auto;max-width:100%;margin:0 auto}
+@media (min-width:900px){
+  .embed{
+    width:min(52rem, calc(100vw - 2 * var(--frame)));
+    position:relative;left:50%;transform:translateX(-50%);
+  }
+}
+.embed-cap,
+figcaption{
+  margin-top:.7rem;text-align:center;overflow-wrap:anywhere;
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.06em;color:var(--ink-soft);
+}
+.embed-cap a,
+figcaption a{color:var(--accent);text-decoration:none}
+.embed-cap a:hover,
+figcaption a:hover{text-decoration:underline}
+
+/* ---- song posts (markdown) ---- */
+.song-sub{margin:-.2rem 0 .8rem;font-style:italic;color:var(--ink-soft)}
+.lyrics{margin:1.6rem 0;padding:1.2rem 0;border-block:1px solid var(--rule)}
+.lyrics-lang{
+  font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:.7rem;
+}
+.lyrics p{margin:0;white-space:pre-line}
+.latin,
+.post-body.bn .latin{font-family:var(--serif-fallback,"Fraunces",Georgia,serif)}
+
+
+/* ============================================================
+   15. FALLBACKS
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  #chapter-host{animation:none}
+  .panel,
+#panel{transition:none}
+  .burger span,
+#burger span{transition:none}
+}
+@media (prefers-reduced-transparency:reduce){
+  .paper,.paper-veil,.panel,
+#panel{background-image:none;background-color:var(--paper-hi)}
+}

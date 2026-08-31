@@ -10,7 +10,16 @@
    HOW IT IS LOADED
    This file must be linked in <head> BEFORE art.js, because
    art.js reads --art-dur out of the computed style to know how
-   long the dream lasts. Link, then script, then everything else.
+   long the dream lasts. Link borsha.css, then this, then art.js.
+
+   WHERE IT SITS
+   The children are z-index 1: above the paper (0) and below the
+   text (2). Above them at 3 is .paper-veil, an opaque slice of
+   the same sheet that hides text scrolling past either end. That
+   veil would also clip the girl's head, so --art-top-gap is no
+   longer a hand-measured number: borsha.css derives it from the
+   veil's own --cap and --fade, and the gutters use it too. Change
+   the topbar height and the artwork follows on its own.
 
    TWO GEOMETRIES, THREE SIZES
    Not phone/tablet/laptop: the real question is whether the
@@ -53,10 +62,11 @@
   --art-rest:.12;           /* opacity it settles at, and stays */
   --art-band-top:34;        /* girl's height along the top, in vh */
   --art-band-bottom:30;     /* boy's height along the bottom, in vh */
-  --art-top-gap:64px;      /* clearance for the topbar, which sits
-                               over the art: without it her head is
-                               clipped by the header. Measure your
-                               topbar and add ~15px of air. */
+  --art-top-gap:calc(var(--cap,6.4rem) + var(--fade,6vh) * .5);
+                           /* clearance for the topbar AND the veil.
+                              Derived, never measured by hand. The
+                              fallbacks only apply if art.css is
+                              loaded without borsha.css. */
 
   --art-ar-girl:.562;       /* her artwork's width ÷ height */
   --art-ar-boy:.569;        /* his */
@@ -79,7 +89,6 @@
     --art-rest:.16;
     --art-band-top:32;
     --art-band-bottom:28;
-    --art-top-gap:88px;
   }
 }
 
@@ -112,6 +121,15 @@ html::after{
   pointer-events:none;
   background-repeat:no-repeat;
   will-change:transform, opacity, filter;
+
+  /* The artwork was painted on its own off-white ground. girl-*.webp
+     has no alpha at all and boy-*.webp's ground is still about 20%
+     opaque, so on cream paper both children would arrive inside a
+     faintly cooler rectangle. multiply removes it: white ground
+     multiplied by paper IS the paper, so the sheet's own grain and
+     deckle read straight through the rain. Same blend the ink uses.
+     This is why the source files need no editing. */
+  mix-blend-mode:multiply;
 }
 
 
@@ -195,7 +213,7 @@ html::after{
   html::before,
   html::after{
     display:block;
-    top:78px;
+    top:var(--art-top-gap);
     bottom:0;
     width:var(--gutter-art-w);
     background-position:center bottom;
