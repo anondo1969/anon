@@ -181,8 +181,14 @@ html::after{
 
   /* boy : bottom, pushed left, mirrored */
   html::before{
-    bottom:0;
     left:0;
+    /* Pinned to the same stable frame as the sheet in borsha.css, not
+       to bottom:0. A fixed element's bottom edge follows the live
+       viewport, so when the mobile address bar collapses he slid about
+       100px while the paper behind him did not. Anchoring from the top
+       of a fixed lvh frame keeps the two locked together. */
+    top:calc(100vh - var(--art-band-bottom) * 1vh);
+    top:calc(100lvh - var(--art-band-bottom) * 1lvh);
     height:calc(var(--art-band-bottom) * 1vh);
     height:calc(var(--art-band-bottom) * 1lvh);
     width:calc(var(--art-band-bottom) * 1vh * var(--art-ar-boy));
@@ -214,7 +220,11 @@ html::after{
   html::after{
     display:block;
     top:var(--art-top-gap);
-    bottom:0;
+    /* height, not bottom:0, for the same reason as the bands above:
+       a landscape phone or tablet collapses its toolbar too, and with
+       background-size:cover a changing height re-crops the artwork. */
+    height:calc(100vh - var(--art-top-gap));
+    height:calc(100lvh - var(--art-top-gap));
     width:var(--gutter-art-w);
     background-position:center bottom;
     background-size:cover;

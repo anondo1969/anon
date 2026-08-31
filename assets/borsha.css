@@ -37,7 +37,11 @@
   /* -- the sheet. One image per shape, not per device. -------- */
   --sheet:url("../assets/paper-mobile.webp");
   --paper-hi:#f9ecd4;          /* shows while the image loads */
-  --surround:#faf8f4;          /* the near-white the sheet floats on */
+  --surround:#f2e4d1;          /* the tone of the sheet's own bottom edge,
+                                  averaged across all three. It was #faf8f4,
+                                  which is 8% brighter and much cooler, so
+                                  any gap or overscroll bounce read as a
+                                  white flash. Now it reads as more paper. */
 
   /* -- ink ---------------------------------------------------- */
   --ink:#23303a;               /* iron-gall blue-black */
@@ -117,7 +121,28 @@ a:hover{color:var(--accent-warm)}
 .paper,
 .paper-veil{
   position:fixed;
-  inset:0;
+  top:0;left:0;right:0;
+
+  /* NOT inset:0. On a fixed element that resolves against the viewport
+     as it is at this instant, and on a phone that changes the moment
+     the address bar collapses: about 100px taller on an iPhone, a 13%
+     jump. With background-size:100% 100% the whole sheet restretches
+     by 13% and every grain slides.
+
+     lvh is the LARGE viewport height, the toolbar-hidden one, and it
+     never moves. The plain vh line above it is the fallback, and on
+     both iOS and Android vh already means exactly that, so old
+     browsers land in the right place too.
+
+     The trade: while the toolbar is showing, the element runs about
+     100px past the bottom of the screen, so the bottom deckle and the
+     veil's fade sit just below the fold. Text then slides under the
+     browser chrome instead of dissolving into paper, which is what
+     every other site does anyway. In exchange nothing ever jumps, and
+     there is never a gap for the page background to show through. */
+  height:100vh;
+  height:100lvh;
+
   pointer-events:none;
   background-color:var(--paper-hi);
   background-image:var(--sheet);
@@ -199,7 +224,7 @@ body.no-absorb footer{
   -webkit-mask-image:radial-gradient(circle,#000 60%,transparent 78%);
           mask-image:radial-gradient(circle,#000 60%,transparent 78%);
 }
-.monogram img{width:100%;height:100%;object-fit:cover;object-position:50% 70%;display:block;filter:saturate(.65) brightness(1.02)}
+.monogram img{width:100%;height:100%;object-fit:cover;display:block}
 
 .brand-name{display:block;font-size:1.04rem;font-weight:500;letter-spacing:-.004em;line-height:1.2}
 .brand-sub{
