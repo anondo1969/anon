@@ -224,7 +224,7 @@ body.no-absorb footer{
   -webkit-mask-image:radial-gradient(circle,#000 60%,transparent 78%);
           mask-image:radial-gradient(circle,#000 60%,transparent 78%);
 }
-.monogram img{width:100%;height:100%;object-fit:cover;display:block}
+.monogram img{width:100%;height:100%;object-fit:cover;object-position:50% 75%;display:block}
 
 .brand-name{display:block;font-size:1.04rem;font-weight:500;letter-spacing:-.004em;line-height:1.2}
 .brand-sub{
